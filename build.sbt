@@ -1,10 +1,12 @@
 lazy val core = project settings (name := "validation")
 
 lazy val shapeless = project dependsOn core settings (
+  dontRelease,
   name := "validation-shapeless",
   libraryDependencies += "com.chuusai" %% "shapeless" % "2.2.0-RC5")
 
 lazy val scalaz = project dependsOn core settings (
+  dontRelease,
   name := "validation-scalaz",
   libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.1.2")
 

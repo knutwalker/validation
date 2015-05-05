@@ -1,6 +1,6 @@
 ## Validation
 
-A standalone Validation data type, called `Result`. (see [http://typelevel.org/blog/2014/02/21/error-handling.html](How do I error handle thee?) for more on the general idea of a Validation)
+A standalone Validation data type, called `Result`. (see [How do I error handle thee?](http://typelevel.org/blog/2014/02/21/error-handling.html) for more on the general idea of a Validation)
 
 The `Result` type is very similar to `scalaz.Validation`, `cats.data.Validated`, or `org.scalactic.Or` with the following differences:
 
