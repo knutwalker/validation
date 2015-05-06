@@ -16,10 +16,12 @@ lazy val tests = project dependsOn (core, shapeless, scalaz) settings (
     Resolver.sonatypeRepo("snapshots"),
     "Scalaz Bintray Repo" at "https://dl.bintray.com/scalaz/releases"
   ),
+  scalacOptions in Test ~= (_.filterNot(_ == "-Ywarn-dead-code")),
   libraryDependencies ++= List(
     "org.specs2"                 %% "specs2-core"               % "3.6"              % "test",
-    "org.specs2"                 %% "specs2-scalacheck"         % "3.6"              % "test",
+    "org.specs2"                 %% "specs2-html"               % "3.6"              % "test",
     "org.specs2"                 %% "specs2-matcher-extra"      % "3.6"              % "test",
+    "org.specs2"                 %% "specs2-scalacheck"         % "3.6"              % "test",
     "org.scalacheck"             %% "scalacheck"                % "1.12.2"           % "test",
     "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.2.0-SNAPSHOT"   % "test",
     "org.typelevel"              %% "scalaz-specs2"             % "0.4.0"            % "test"

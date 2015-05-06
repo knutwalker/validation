@@ -25,6 +25,16 @@ import scala.util.{Failure, Success, Try}
 
 sealed trait Result[+E, +A] extends Any with Product with Serializable {
 
+  final class InvalidThenValid[X](fe: E ⇒ X) {
+    def valid(fa: A ⇒ X): X =
+      fold(fe, fa)
+  }
+
+  final class ValidThenInvalid[X](fa: A ⇒ X) {
+    def invalid(fe: E ⇒ X): X =
+      fold(fe, fa)
+  }
+
   /**
    * Run the first function if the Result is invalid,
    * otherwise, run the second function.
@@ -35,19 +45,17 @@ sealed trait Result[+E, +A] extends Any with Product with Serializable {
     case Result.Valid(a)   ⇒ fa(a)
   }
 
-  def invalid[EE >: E, AA >: A, B](fe: EE ⇒ B): Result.InvalidThenValid[EE, AA, B] =
-    new Result.InvalidThenValid(this, fe)
+  def valid[B](fa: A ⇒ B): ValidThenInvalid[B] =
+    new ValidThenInvalid(fa)
 
-  def valid[EE >: E, AA >: A, B](fa: AA ⇒ B): Result.ValidThenInvalid[EE, AA, B] =
-    new Result.ValidThenInvalid(this, fa)
+  def invalid[B](fe: E ⇒ B): InvalidThenValid[B] =
+    new InvalidThenValid(fe)
 
-  /**
-   * flatMap over the Result if it is valid.
-   * flatMap does not accumulate errors. If you want to do so,
-   * use [[and]] instead.
-   */
-  def flatMap[EE >: E, B](f: A ⇒ Result[EE, B]): Result[EE, B] =
-    fold(Result.invalid, f)
+  def foldLeft[B](b: B)(f: (B, A) ⇒ B): B =
+    fold(_ ⇒ b, f(b, _))
+
+  def foldRight[B](b: B)(f: (A, B) => B): B =
+    fold(_ ⇒ b, f(_, b))
 
   def bimap[EE, AA](fe: E ⇒ EE, fa: A ⇒ AA): Result[EE, AA] =
     fold(fe andThen Result.invalid, fa andThen Result.valid)
@@ -58,8 +66,19 @@ sealed trait Result[+E, +A] extends Any with Product with Serializable {
   def invalidMap[F](f: E ⇒ F): Result[F, A] =
     bimap(f, identity)
 
+  /**
+   * flatMap over the Result if it is valid.
+   * flatMap does not accumulate errors. If you want to do so,
+   * use [[and]] instead.
+   */
+  def flatMap[EE >: E, B](f: A ⇒ Result[EE, B]): Result[EE, B] =
+    fold(Result.invalid, f)
+
   def recover[AA >: A](f: E ⇒ AA): Result[E, AA] =
     fold(f andThen Result.valid, _ ⇒ this)
+
+  def recoverWith[AA >: A, EE](f: E ⇒ Result[EE, AA]): Result[EE, AA] =
+    fold(f, Result.valid)
 
   def apply[EE >: E, B](f: Result[EE, A ⇒ B])(implicit EE: Mergeable[EE]): Result[EE, B] =
     fold(
@@ -67,20 +86,14 @@ sealed trait Result[+E, +A] extends Any with Product with Serializable {
       a1 ⇒ f.fold(Result.invalid, ab ⇒ Result.valid(ab(a1)))
     )
 
-  def filter[EE >: E](p: A ⇒ Boolean, ifEmpty: ⇒ EE): Result[EE, A] =
-    fold(_ ⇒ this, a ⇒ if (p(a)) this else Result.invalid(ifEmpty))
-
   def and[EE >: E, AA >: A, B, C](other: Result[EE, B])(implicit EE: Mergeable[EE]): Result.Ap2[EE, AA, B] =
     new Result.Ap2(this, other)
 
   def zip[EE >: E, B](b: Result[EE, B])(implicit EE: Mergeable[EE]): Result[EE, (A, B)] =
     and(b).tupled
 
-  def foldLeft[B](b: B)(f: (B, A) ⇒ B): B =
-    fold(_ ⇒ b, f(b, _))
-
-  def foldRight[B](b: B)(f: (A, ⇒ B) => B): B =
-    fold(_ ⇒ b, f(_, b))
+  def filter[EE >: E](p: A ⇒ Boolean, ifEmpty: ⇒ EE): Result[EE, A] =
+    fold(_ ⇒ this, a ⇒ if (p(a)) this else Result.invalid(ifEmpty))
 
   def isValid: Boolean =
     fold(_ ⇒ false, _ ⇒ true)
@@ -93,6 +106,9 @@ sealed trait Result[+E, +A] extends Any with Product with Serializable {
 
   def forall(p: A ⇒ Boolean): Boolean =
     fold(_ ⇒ true, p)
+
+  def contains[AA >: A](x: ⇒ AA): Boolean =
+    fold(_ ⇒ false, _ == x)
 
   def toOption: Option[A] =
     fold(_ ⇒ None, Some.apply)
@@ -165,12 +181,6 @@ object Result {
   def invalid[E, A](e: E): Result[E, A] =
     new Invalid[E](e)
 
-  def traverse[A, B, E, F[X] <: TraversableOnce[X], That](xs: F[A])(f: A => Result[E, B])(implicit E: Mergeable[E], cbf: CanBuildFrom[F[A], B, That]): Result[E, That] =
-    xs.foldLeft(valid[E, mutable.Builder[B, That]](cbf(xs)))((acc, r) ⇒ f(r)(acc.map(b ⇒ b += _))).map(_.result())
-
-  def sequence[A, E, F[X] <: TraversableOnce[X]](xs: F[Result[E, A]])(implicit E: Mergeable[E], cbf: CanBuildFrom[F[Result[E, A]], A, F[A]]): Result[E, F[A]] =
-    traverse(xs)(x ⇒ x)
-
   def fromTry[A](x: Try[A]): Result[Throwable, A] = x match {
     case Failure(e) ⇒ invalid(e)
     case Success(a) ⇒ valid(a)
@@ -186,11 +196,17 @@ object Result {
     case Some(a) ⇒ valid(a)
   }
 
-  def catching[T >: Null <: Throwable : ClassTag]: FromTryCatchAux[T] =
-    new FromTryCatchAux[T]
+  def catching[T >: Null <: Throwable : ClassTag]: FromTryCatchAux[T, T] =
+    new FromTryCatchAux[T, T](identity)
 
-  sealed case class Valid[+A](value: A) extends Result[Nothing, A]
-  sealed case class Invalid[+E](error: E) extends Result[E, Nothing]
+  def traverse[A, B, E, F[X] <: TraversableOnce[X], That](xs: F[A])(f: A => Result[E, B])(implicit E: Mergeable[E], cbf: CanBuildFrom[F[A], B, That]): Result[E, That] =
+    xs.foldLeft(valid[E, mutable.Builder[B, That]](cbf(xs)))((acc, r) ⇒ f(r)(acc.map(b ⇒ b += _))).map(_.result())
+
+  def sequence[A, E, F[X] <: TraversableOnce[X]](xs: F[Result[E, A]])(implicit E: Mergeable[E], cbf: CanBuildFrom[F[Result[E, A]], A, F[A]]): Result[E, F[A]] =
+    traverse(xs)(x ⇒ x)
+
+  final case class Valid[+A](value: A) extends Result[Nothing, A]
+  final case class Invalid[+E](error: E) extends Result[E, Nothing]
 
   trait I[E] {
 
@@ -202,19 +218,14 @@ object Result {
     type I[E] = Result[E, A]
   }
 
-  final class InvalidThenValid[E, A, X] private[validation](r: Result[E, A], fe: E ⇒ X) {
-    def valid(fa: A ⇒ X): X =
-      r.fold(fe, fa)
-  }
+  final class FromTryCatchAux[T >: Null <: Throwable, R] private[validation] (leftMap: T ⇒ R) {
+    def run[A](f: ⇒ A)(implicit T: ClassTag[T]): Result[R, A] =
+      Exception.catching(T.runtimeClass)
+        .withApply(t ⇒ invalid(leftMap(t.asInstanceOf[T])))
+        .apply(valid(f))
 
-  final class ValidThenInvalid[E, A, X] private[validation](r: Result[E, A], fa: A ⇒ X) {
-    def invalid(fe: E ⇒ X): X =
-      r.fold(fe, fa)
-  }
-
-  final class FromTryCatchAux[T] private[validation] {
-    def run[A](f: ⇒ A)(implicit T: ClassTag[T]): Result[T, A] =
-      Exception.catching(T.runtimeClass).withApply(t ⇒ invalid(t.asInstanceOf[T]))(valid(f))
+    def using[RR](f: R ⇒ RR): FromTryCatchAux[T, RR] =
+      new FromTryCatchAux(leftMap andThen f)
   }
 
   class Ap2[X, A, B](a: Result[X, A], b: Result[X, B]) {
