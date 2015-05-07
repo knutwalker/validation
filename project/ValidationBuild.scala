@@ -15,6 +15,7 @@ object ValidationBuild extends AutoPlugin {
                  description := "stand-alone validation type",
                 scalaVersion := "2.11.6",
           crossScalaVersions := scalaVersion.value :: "2.10.5" :: Nil,
+                 javaVersion := JavaVersion.Java17,
   initialCommands in console := """import validation._"""
   )
 }

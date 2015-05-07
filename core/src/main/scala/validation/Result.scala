@@ -86,7 +86,7 @@ sealed trait Result[+E, +A] extends Any with Product with Serializable {
       a1 ⇒ f.fold(Result.invalid, ab ⇒ Result.valid(ab(a1)))
     )
 
-  def and[EE >: E, AA >: A, B, C](other: Result[EE, B])(implicit EE: Mergeable[EE]): Result.Ap2[EE, AA, B] =
+  def and[EE >: E, AA >: A, B](other: Result[EE, B])(implicit EE: Mergeable[EE]): Result.Ap2[EE, AA, B] =
     new Result.Ap2(this, other)
 
   def zip[EE >: E, B](b: Result[EE, B])(implicit EE: Mergeable[EE]): Result[EE, (A, B)] =

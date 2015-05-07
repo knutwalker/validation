@@ -36,9 +36,9 @@ ${Result.valid(42).compare(Result.invalid(1337)) ==== 1}
 ${Result.invalid(1337).compare(Result.valid(42)) ==== -1}
 ${Result.invalid(1337).compare(Result.valid(0)) ==== -1}
 ${Result.invalid(1337).compare(Result.valid(1337)) ==== -1}
-${Result.invalid(1337).compare(Result.invalid(1337)) ==== 0}
-${Result.invalid(1337).compare(Result.invalid(42)) ==== 1}
-${Result.invalid(1337).compare(Result.invalid(133742)) ==== -1}
+${Result.invalid(1337).compare[Int, Int](Result.invalid(1337)) ==== 0}
+${Result.invalid(1337).compare[Int, Int](Result.invalid(42)) ==== 1}
+${Result.invalid(1337).compare[Int, Int](Result.invalid(133742)) ==== -1}
 
 $br
 

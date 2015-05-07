@@ -33,8 +33,8 @@ $br
 
 ${typecheck("Result.valid(42).get") must failWith("value get is not a member of validation.Result")}
 ${typecheck("Result.invalid(1337).get") must failWith("value get is not a member of validation.Result")}
-${import Result.unsafe._; Result.valid(42).get ==== 42}
-${import Result.unsafe._; Result.invalid(1337).get must throwA[RuntimeException](message = "Result.invalid")}
+${import Result.unsafe._; Result.valid[Int, Int](42).get ==== 42}
+${import Result.unsafe._; Result.invalid[Int, Int](1337).get must throwA[RuntimeException](message = "Result.invalid")}
 
 $br
 
@@ -42,8 +42,8 @@ $br
 
 ${typecheck("Result.valid(42).getInvalid") must failWith("value getInvalid is not a member of validation.Result")}
 ${typecheck("Result.invalid(1337).getInvalid") must failWith("value getInvalid is not a member of validation.Result")}
-${import Result.unsafe._; Result.valid(42).getInvalid must throwA[RuntimeException](message = "Result.valid")}
-${import Result.unsafe._; Result.invalid(1337).getInvalid ==== 1337}
+${import Result.unsafe._; Result.valid[Int, Int](42).getInvalid must throwA[RuntimeException](message = "Result.valid")}
+${import Result.unsafe._; Result.invalid[Int, Int](1337).getInvalid ==== 1337}
 
 $br
 
@@ -51,8 +51,8 @@ $br
 
 ${typecheck("Result.valid(42).foreach(_ ==== 42)") must failWith("value foreach is not a member of validation.Result")}
 ${typecheck("Result.invalid(1337).foreach(_ ==== 1337)") must failWith("value foreach is not a member of validation.Result")}
-${import Result.unsafe._; Result.valid(42).foreach(_ ==== 42); true}
-${import Result.unsafe._; Result.invalid(1337).foreach((_: Int) ⇒ failure); true}
+${import Result.unsafe._; Result.valid[Int, Int](42).foreach(_ ==== 42); true}
+${import Result.unsafe._; Result.invalid[Int, Int](1337).foreach(_ ⇒ failure); true}
 
 $br
 
