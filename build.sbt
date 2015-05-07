@@ -19,6 +19,8 @@ lazy val tests = project dependsOn (core, scalaz) settings (
       exclude("org.specs2", s"specs2-core${scalaBinaryVersion.value}")
       exclude("org.specs2", s"specs2-scalacheck${scalaBinaryVersion.value}")))
 
-lazy val parent = project in file(".") dependsOn (core, scalaz) aggregate (core, scalaz, tests) settings dontRelease
+lazy val docs = project dependsOn tests
+
+lazy val parent = project in file(".") dependsOn (core, scalaz) aggregate (core, scalaz, tests, docs) settings dontRelease
 
 addCommandAlias("travis", ";clean;coverage;test;coverageReport;coverageAggregate")

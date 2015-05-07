@@ -1,0 +1,6 @@
+name: validation documentation
+markdown: redcarpet
+highlighter: pygments
+baseurl: /validation/
+apidocs: /validation/api/
+guide: /validation/guide/
