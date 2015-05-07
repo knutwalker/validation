@@ -1,0 +1,84 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Transform Results</title>
+    <link href="./css/opensans-fonts.css"                          type="text/css" rel="stylesheet" />
+    <link href="./css/bootstrap.min.css"                           type="text/css" rel="stylesheet" />
+    <link href="./css/font-awesome.min.css"                        type="text/css" rel="stylesheet" />
+    <link href="./css/prettify.css"                                type="text/css" rel="stylesheet" />
+    <link href="./css/tabber.css"                                  type="text/css" rel="stylesheet" />
+    <link href="./css/tipuesearch.css"                             type="text/css" rel="stylesheet" />
+    <link href="./css/specs2.css"                                  type="text/css" rel="stylesheet" />
+    <link href="./css/specs2-user.css"                             type="text/css" rel="stylesheet" />
+
+    <script src="./javascript/jquery.js"                           type="text/javascript"></script>
+    <script src="./javascript/jquery.jstree.js"                    type="text/javascript"></script>
+    <script src="./javascript/tabber.js"                           type="text/javascript"></script>
+    <script src="./javascript/tabber_start.js"                     type="text/javascript"></script>
+    <script src="./javascript/prettify.js"                         type="text/javascript"></script>
+    <script src="./javascript/specs2.js"                           type="text/javascript"></script>
+    <script src="./javascript/specs2-user.js"                      type="text/javascript"></script>
+    <script src="./javascript/tipuesearch/tipuesearch_set.js"      type="text/javascript"></script>
+    <script src="./javascript/tipuesearch/tipuesearch_contents.js" type="text/javascript"></script>
+    <script src="./javascript/tipuesearch/tipuesearch.min.js"      type="text/javascript"></script>
+
+</head>
+<body onload="prettyPrint()">
+
+<div class="container">
+
+<div class="col-md-1"></div>
+
+<div class="col-md-1"></div>
+
+
+
+
+<div class="col-md-10">
+<h1>Transform Results</h1>
+<div id="tipue_search_content"></div>
+
+<h4 id="result-transformation">Result transformation</h4>
+<p><br/></p>
+<h6 id="of-valid-values-with-map"><strong>of valid values with map</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(1337).map(_ - 1295) ==== Valid(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).map((_: Int) + 42) ==== Invalid(1337)</code></li></ul>
+<p><br/></p>
+<h6 id="of-invalid-values-with-invalidmap"><strong>of invalid values with invalidMap</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).invalidMap((_: Int) + 1295) ==== Valid(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1295).invalidMap(_ + 42) ==== Invalid(1337)</code></li></ul>
+<p><br/></p>
+<h6 id="of-both-values-with-bimap"><strong>of both values with bimap</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(1337).bimap((_: Int) + 42, _ - 1295) ==== Valid(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1295).bimap(_ + 42, (_: Int) + 42) ==== Invalid(1337)</code></li></ul>
+<p><br/></p>
+<h6 id="of-valid-values-while-discarding-invalids-with-flatmap"><strong>of valid values while discarding invalids with flatMap</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(1337).flatMap(a ⇒ Result.valid(a - 1295)) ==== Valid(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).flatMap((a: Int) ⇒ Result.valid(42)) ==== Invalid(1337)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).flatMap(a ⇒ Result.invalid(a + 1295)) ==== Invalid(1337)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).flatMap((a: Int) ⇒ Result.invalid(a + 1295)) ==== Invalid(1337)</code></li></ul>
+<p><br/></p>
+<h6 id="of-invalid-values-with-recover"><strong>of invalid values with recover</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).recover(identity) ==== Valid(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).recover(_ - 1295) ==== Valid(42)</code></li></ul>
+<p><br/></p>
+<h6 id="of-invalid-values-with-recoverwith"><strong>of invalid values with recoverWith</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).recoverWith(Function.const(Result.valid(1337))) ==== Valid(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).recoverWith(Function.const(Result.valid(42))) ==== Valid(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).recoverWith(Function.const(Result.invalid(1337))) ==== Valid(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).recoverWith(Function.const(Result.invalid(1337))) ==== Invalid(1337)</code></li></ul>
+<p><br/></p>
+<h6 id="of-swapped-values"><strong>of swapped values</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).swapped(_.map((_: Int) + 1295)) ==== Valid(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).swapped(_.map(_ + 1295)) ==== Invalid(1337)</code></li></ul>
+<p><br/></p>
+<h6 id="swap-exchanges-valid-and-invalid"><strong>swap exchanges valid and invalid</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).swap ==== Valid(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(1337).swap ==== Invalid(1337)</code></li></ul>
+<p><br/></p>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Translating Results</title>
+    <link href="./css/opensans-fonts.css"                          type="text/css" rel="stylesheet" />
+    <link href="./css/bootstrap.min.css"                           type="text/css" rel="stylesheet" />
+    <link href="./css/font-awesome.min.css"                        type="text/css" rel="stylesheet" />
+    <link href="./css/prettify.css"                                type="text/css" rel="stylesheet" />
+    <link href="./css/tabber.css"                                  type="text/css" rel="stylesheet" />
+    <link href="./css/tipuesearch.css"                             type="text/css" rel="stylesheet" />
+    <link href="./css/specs2.css"                                  type="text/css" rel="stylesheet" />
+    <link href="./css/specs2-user.css"                             type="text/css" rel="stylesheet" />
+
+    <script src="./javascript/jquery.js"                           type="text/javascript"></script>
+    <script src="./javascript/jquery.jstree.js"                    type="text/javascript"></script>
+    <script src="./javascript/tabber.js"                           type="text/javascript"></script>
+    <script src="./javascript/tabber_start.js"                     type="text/javascript"></script>
+    <script src="./javascript/prettify.js"                         type="text/javascript"></script>
+    <script src="./javascript/specs2.js"                           type="text/javascript"></script>
+    <script src="./javascript/specs2-user.js"                      type="text/javascript"></script>
+    <script src="./javascript/tipuesearch/tipuesearch_set.js"      type="text/javascript"></script>
+    <script src="./javascript/tipuesearch/tipuesearch_contents.js" type="text/javascript"></script>
+    <script src="./javascript/tipuesearch/tipuesearch.min.js"      type="text/javascript"></script>
+
+</head>
+<body onload="prettyPrint()">
+
+<div class="container">
+
+<div class="col-md-1"></div>
+
+<div class="col-md-1"></div>
+
+
+
+
+<div class="col-md-10">
+<h1>Translating Results</h1>
+<div id="tipue_search_content"></div>
+
+<h4 id="result-translations">Result translations</h4>
+<p><br/></p>
+<h6 id="to-option"><strong>to Option</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).toOption ==== Some(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).toOption ==== None</code></li></ul>
+<p><br/></p>
+<h6 id="to-immutable-seq"><strong>to immutable Seq</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).toSeq ==== immutable.Seq(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).toSeq ==== immutable.Seq()</code></li></ul>
+<p><br/></p>
+<h6 id="to-list"><strong>to List</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).toList ==== List(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).toList ==== Nil</code></li></ul>
+<p><br/></p>
+<h6 id="to-stream"><strong>to Stream</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).toStream ==== Stream(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).toStream ==== Stream()</code></li></ul>
+<p><br/></p>
+<h6 id="to-vector"><strong>to Vector</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).toVector ==== Vector(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).toVector ==== Vector()</code></li></ul>
+<p><br/></p>
+<h6 id="to-set"><strong>to Set</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).toSet ==== Set(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).toSet[Int] ==== Set.empty[Int]</code></li></ul>
+<p><br/></p>
+<h6 id="to-either"><strong>to Either</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).toEither ==== Right(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).toEither ==== Left(1337)</code></li></ul>
+<p><br/></p>
+<h6 id="to-try"><strong>to Try</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).toTry ==== Success(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(Error).toTry ==== Failure(Error)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">typecheck(&quot;Result.invalid(1337).toTry&quot;) must failWith(&quot;Cannot prove that Int &lt;:&lt; Throwable.&quot;)</code></li></ul>
+<p><br/></p>
+</div>
+
+</div>
+
+</body>
+</html>

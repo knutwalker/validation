@@ -1,0 +1,66 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Unsafe Operations on Results</title>
+    <link href="./css/opensans-fonts.css"                          type="text/css" rel="stylesheet" />
+    <link href="./css/bootstrap.min.css"                           type="text/css" rel="stylesheet" />
+    <link href="./css/font-awesome.min.css"                        type="text/css" rel="stylesheet" />
+    <link href="./css/prettify.css"                                type="text/css" rel="stylesheet" />
+    <link href="./css/tabber.css"                                  type="text/css" rel="stylesheet" />
+    <link href="./css/tipuesearch.css"                             type="text/css" rel="stylesheet" />
+    <link href="./css/specs2.css"                                  type="text/css" rel="stylesheet" />
+    <link href="./css/specs2-user.css"                             type="text/css" rel="stylesheet" />
+
+    <script src="./javascript/jquery.js"                           type="text/javascript"></script>
+    <script src="./javascript/jquery.jstree.js"                    type="text/javascript"></script>
+    <script src="./javascript/tabber.js"                           type="text/javascript"></script>
+    <script src="./javascript/tabber_start.js"                     type="text/javascript"></script>
+    <script src="./javascript/prettify.js"                         type="text/javascript"></script>
+    <script src="./javascript/specs2.js"                           type="text/javascript"></script>
+    <script src="./javascript/specs2-user.js"                      type="text/javascript"></script>
+    <script src="./javascript/tipuesearch/tipuesearch_set.js"      type="text/javascript"></script>
+    <script src="./javascript/tipuesearch/tipuesearch_contents.js" type="text/javascript"></script>
+    <script src="./javascript/tipuesearch/tipuesearch.min.js"      type="text/javascript"></script>
+
+</head>
+<body onload="prettyPrint()">
+
+<div class="container">
+
+<div class="col-md-1"></div>
+
+<div class="col-md-1"></div>
+
+
+
+
+<div class="col-md-10">
+<h1>Unsafe Operations on Results</h1>
+<div id="tipue_search_content"></div>
+
+<h4 id="unsafe-operations-on-results">Unsafe Operations on Results</h4>
+<p><br/></p>
+<h6 id="get-is-an-unsafe-operation"><strong>get is an unsafe operation</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">typecheck(&quot;Result.valid(42).get&quot;) must failWith(&quot;value get is not a member of validation.Result&quot;)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">typecheck(&quot;Result.invalid(1337).get&quot;) must failWith(&quot;value get is not a member of validation.Result&quot;)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">{import Result.unsafe._; Result.valid[Int, Int](42).get ==== 42}</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">{import Result.unsafe._; Result.invalid[Int, Int](1337).get must throwA[RuntimeException](message = &quot;Result.invalid&quot;)}</code></li></ul>
+<p><br/></p>
+<h6 id="getinvalid-is-an-unsafe-operation"><strong>getInvalid is an unsafe operation</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">typecheck(&quot;Result.valid(42).getInvalid&quot;) must failWith(&quot;value getInvalid is not a member of validation.Result&quot;)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">typecheck(&quot;Result.invalid(1337).getInvalid&quot;) must failWith(&quot;value getInvalid is not a member of validation.Result&quot;)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">{import Result.unsafe._; Result.valid[Int, Int](42).getInvalid must throwA[RuntimeException](message = &quot;Result.valid&quot;)}</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">{import Result.unsafe._; Result.invalid[Int, Int](1337).getInvalid ==== 1337}</code></li></ul>
+<p><br/></p>
+<h6 id="foreach-is-an-unsafe-operation"><strong>foreach is an unsafe operation</strong></h6>
+<ul><li class="example success ok"><code class="prettyprint">typecheck(&quot;Result.valid(42).foreach(_ ==== 42)&quot;) must failWith(&quot;value foreach is not a member of validation.Result&quot;)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">typecheck(&quot;Result.invalid(1337).foreach(_ ==== 1337)&quot;) must failWith(&quot;value foreach is not a member of validation.Result&quot;)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">{import Result.unsafe._; Result.valid[Int, Int](42).foreach(_ ==== 42); true}</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">{import Result.unsafe._; Result.invalid[Int, Int](1337).foreach(_ ⇒ failure); true}</code></li></ul>
+<p><br/></p>
+</div>
+
+</div>
+
+</body>
+</html>
