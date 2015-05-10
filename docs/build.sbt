@@ -11,9 +11,18 @@ unidocSettings
 git.remoteRepo := "git@github.com:knutwalker/validation.git"
 ghpagesNoJekyll := false
 includeFilter in makeSite ~= (_ || "*.yml" || "*.md")
+autoAPIMappings := true
+scalacOptions in (ScalaUnidoc, unidoc) ++= List(
+  "-doc-title", githubProject.value.repo,
+  "-doc-version", version.value,
+  "-diagrams",
+  "-groups"
+)
 
-site.addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), "api")
-siteMappings <++= baseDirectory map { dir =>
+siteMappings <++= (mappings in (ScalaUnidoc, packageDoc), baseDirectory, version) map { (docs, dir, ver) =>
+  val versions = Seq("latest", ver)
+  val doc = for(v <- versions; (f, d) <- docs) yield (f, s"api/$v/" + d)
   val specs = dir / ".." / "target" / "specs2-reports"
-  Path.allSubpaths(specs).map { case (f, p) => (f, s"guide/$p") }.toSeq
+  val guide = Path.allSubpaths(specs).map { case (f, p) => (f, s"guide/$p") }.toSeq
+  doc ++ guide
 }

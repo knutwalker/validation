@@ -8,4 +8,4 @@ section: "home"
 
 ## [Guide](guide/index.html)
 
-## [API](api/index.html)
+## [API](api/latest/index.html#validation.Result)

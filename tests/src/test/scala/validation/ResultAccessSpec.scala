@@ -48,15 +48,15 @@ $br
 
 ###### **with valid/invalid (curried fold)**
 
-${Result.valid(42).valid(identity).invalid(identity) ==== 42}
-${Result.invalid(1337).valid(identity).invalid(identity) ==== 1337}
+${Result.valid(42).valid(identity)(identity) ==== 42}
+${Result.invalid(1337).valid(identity)(identity) ==== 1337}
 
 $br
 
 ###### **with invalid/valid (curried fold)**
 
-${Result.valid(42).invalid(identity).valid(identity) ==== 42}
-${Result.invalid(1337).invalid(identity).valid(identity) ==== 1337}
+${Result.valid(42).invalid(identity)(identity) ==== 42}
+${Result.invalid(1337).invalid(identity)(identity) ==== 1337}
 
 $br
 

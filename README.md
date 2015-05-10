@@ -32,7 +32,7 @@ importing `validation.Result.symbolic._`
 
 ### What Validation is not
 
-This library is not a implementation or validation framework, just
+This library is not an implementation of a validation framework, just
 a general data structure.
 
 
@@ -61,7 +61,7 @@ def parseAge(s: String): Validated[Int] =
     .invalidMap(x => List(x.getMessage))
     .filter(age => age >= 0, List(s"invalid age: '$s'"))
 
-def parsePerson(name: String, age: String): Validated[Person] = 
+def parsePerson(name: String, age: String): Validated[Person] =
   (parseName(name) and parseAge(age)) apply Person
 
 parsePerson("Bernd", "42")

@@ -16,6 +16,10 @@ object ValidationBuild extends AutoPlugin {
                 scalaVersion := "2.11.6",
           crossScalaVersions := scalaVersion.value :: "2.10.5" :: Nil,
                  javaVersion := JavaVersion.Java17,
-  initialCommands in console := """import validation._"""
+  initialCommands in console := """import validation._""",
+                    pomExtra := pomExtra.value ++
+                      <properties>
+                        <info.apiURL>http://{githubProject.value.org}.github.io/{githubProject.value.repo}/api/{version.value}/</info.apiURL>
+                      </properties>
   )
 }
