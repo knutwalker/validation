@@ -53,12 +53,12 @@
 <ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).fold(identity, identity) ==== 1337</code></li></ul>
 <p><br/></p>
 <h6 id="with-validinvalid-curried-fold"><strong>with valid/invalid (curried fold)</strong></h6>
-<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).valid(identity).invalid(identity) ==== 42</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).valid(identity).invalid(identity) ==== 1337</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).valid(identity)(identity) ==== 42</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).valid(identity)(identity) ==== 1337</code></li></ul>
 <p><br/></p>
 <h6 id="with-invalidvalid-curried-fold"><strong>with invalid/valid (curried fold)</strong></h6>
-<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).invalid(identity).valid(identity) ==== 42</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).invalid(identity).valid(identity) ==== 1337</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).invalid(identity)(identity) ==== 42</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).invalid(identity)(identity) ==== 1337</code></li></ul>
 <p><br/></p>
 <h6 id="with-foldleft"><strong>with foldLeft</strong></h6>
 <ul><li class="example success ok"><code class="prettyprint">Result.valid(42).foldLeft(1337)((b, a) ⇒ a) ==== 42</code></li></ul>
