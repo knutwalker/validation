@@ -34,29 +34,29 @@ $br
 
 ###### **with valueOr**
 
-${Result.valid(42).valueOr(identity) ==== 42}
-${Result.invalid(1337).valueOr(identity) ==== 1337}
+${Result.valid(42).valueOr(_.head) ==== 42}
+${Result.invalid(1337).valueOr(_.head) ==== 1337}
 
 $br
 
 ###### **with fold**
 
-${Result.valid(42).fold(identity, identity) ==== 42}
-${Result.invalid(1337).fold(identity, identity) ==== 1337}
+${Result.valid(42).fold(_.head, identity) ==== 42}
+${Result.invalid(1337).fold(_.head, identity) ==== 1337}
 
 $br
 
 ###### **with valid/invalid (curried fold)**
 
-${Result.valid(42).valid(identity)(identity) ==== 42}
-${Result.invalid(1337).valid(identity)(identity) ==== 1337}
+${Result.valid(42).valid(identity)(_.head) ==== 42}
+${Result.invalid(1337).valid(identity)(_.head) ==== 1337}
 
 $br
 
 ###### **with invalid/valid (curried fold)**
 
-${Result.valid(42).invalid(identity)(identity) ==== 42}
-${Result.invalid(1337).invalid(identity)(identity) ==== 1337}
+${Result.valid(42).invalid(_.head)(identity) ==== 42}
+${Result.invalid(1337).invalid(_.head)(identity) ==== 1337}
 
 $br
 

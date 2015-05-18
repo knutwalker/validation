@@ -29,6 +29,11 @@ All methods are named aptly (or so I hope) and with ascii characters.
 Symbolic names (such as `|` for `getOrElse` or `|@|` for `and`) can be enabled by
 importing `validation.Result.symbolic._`
 
+- implied underlying Vector to accumulate data
+
+Scalaz differentiates between `Validation[E, A]` and `type ValidationNel[E, A] = Validation[NonEmptyList[E], A]`
+where as `Result[E, A]` has an implied `NonEmptyVector` accumulating the `E`.
+It behaves mostly as a permanent (imaginary) `ResultNev[E, A]`.
 
 ### What Validation is not
 
@@ -48,31 +53,32 @@ libraryDependencies += "de.knutwalker" %% "validation" % "0.1.0"
 ```scala
 import validation._
 
-type Validated[A] = Result[List[String], A]
+type Validated[A] = Result[String, A]
 
 case class Person(name: String, age: Int)
 
 def parseName(s: String): Validated[String] =
   if (s.trim.nonEmpty) Result.valid(s.trim)
-  else Result.invalid(List(s"invalid name: '$s'"))
+  else Result.invalid(s"invalid name: '$s'")
 
 def parseAge(s: String): Validated[Int] =
-  Result.catching[NumberFormatException].run(s.trim.toInt)
-    .invalidMap(x => List(x.getMessage))
-    .filter(age => age >= 0, List(s"invalid age: '$s'"))
+  Result.catching[NumberFormatException]
+    .using(_.getMessage)
+    .run(s.trim.toInt)
+    .filter(_ >= 0, s"invalid age: '$s'")
 
 def parsePerson(name: String, age: String): Validated[Person] =
-  (parseName(name) and parseAge(age)) apply Person
+   (parseName(name) and parseAge(age)) apply Person
 
 parsePerson("Bernd", "42")
 // res0: Validated[Person] = Valid(Person(Bernd,42))
 
 parsePerson("Bernd", "fortytwo")
-// res1: Validated[Person] = Invalid(List(For input string: "fortytwo"))
+// res1: Validated[Person] = Invalid(For input string: "fortytwo")
 
 parsePerson("Bernd", "-1337")
-// res2: Validated[Person] = Invalid(List(invalid age: '-1337'))
+// res2: Validated[Person] = Invalid(invalid age: '-1337')
 
 parsePerson("", "")
-// res3: Validated[Person] = Invalid(List(invalid age: '', invalid name: ''))
+// res3: Validated[Person] = Invalids(NonEmptyVector(invalid name: '',For input string: ""))
 ```
