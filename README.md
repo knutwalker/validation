@@ -29,6 +29,11 @@ All methods are named aptly (or so I hope) and with ascii characters.
 Symbolic names (such as `|` for `getOrElse` or `|@|` for `and`) can be enabled by
 importing `validation.Result.symbolic._`
 
+- implied underlying Vector to accumulate data
+
+Scalaz differentiates between `Validation[E, A]` and `type ValidationNel[E, A] = Validation[NonEmptyList[E], A]`
+where as `Result[E, A]` has an implied `NonEmptyVector` accumulating the `E`.
+It behaves mostly as a permanent (imaginary) `ResultNev[E, A]`.
 
 ### What Validation is not
 

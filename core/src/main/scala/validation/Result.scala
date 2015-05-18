@@ -320,7 +320,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    * Continues validation with the provided function
    * if this is an invalid `Result`.
    *
-   * This is the Monadic Bind through the valid value.
+   * This is the Monadic Bind through the invalid value.
    *
    * @group Transform
    * @param f the function to continue with
@@ -784,7 +784,7 @@ object Result {
    * @tparam B the resulting valid type
    * @tparam E the resulting invalid type
    * @return A Result with all valid values or all invalid ones
-   * @usecase def traverse[A, B, E](xs: Seq[A])(f: A => Result[E, B]): Result[E, Seq[B]\]
+   * @usecase def traverse[A, B, E](xs: Seq[A])(f: A => Result[E, B]): Result[E, Seq[B] ] = ??? // SI-8255
    *          @inheritdoc
    */
   def traverse[A, B, E, F[X] <: TraversableOnce[X], That](xs: F[A])(f: A => Result[E, B])(implicit cbf: CanBuildFrom[F[A], B, That]): Result[E, That] =
@@ -812,7 +812,7 @@ object Result {
    * @tparam A the resulting valid type
    * @tparam E the resulting invalid type
    * @return A Result with all valid values or all invalid ones
-   * @usecase def sequence[A, E](xs: Seq[Result[E, A]\]): Result[E, Seq[A]\]
+   * @usecase def sequence[A, E](xs: Seq[Result[E, A] ]): Result[E, Seq[A] ] = ??? // SI-8255
    *          @inheritdoc
    */
   def sequence[A, E, F[X] <: TraversableOnce[X]](xs: F[Result[E, A]])(implicit cbf: CanBuildFrom[F[Result[E, A]], A, F[A]]): Result[E, F[A]] =
@@ -826,6 +826,7 @@ object Result {
    * Curried [[Result]] type, starting with the invalid part.
    *
    * This can be used to avoid type lambas:
+   *
    * {{{
    *   // instead of
    *   type FR[+E] = Functor[({type λ[α] = Result[E, α]})#λ]
@@ -844,6 +845,7 @@ object Result {
    * Curried [[Result]] type, starting with the valid part.
    *
    * This can be used to avoid type lambas:
+   *
    * {{{
    *   // instead of
    *   type FR[+A] = Functor[({type λ[α] = Result[α, A]})#λ]
