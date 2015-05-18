@@ -24,3 +24,4 @@ lazy val docs = project dependsOn tests
 lazy val parent = project in file(".") dependsOn (core, scalaz) aggregate (core, scalaz, tests, docs) settings dontRelease
 
 addCommandAlias("travis", ";clean;coverage;test;coverageReport;coverageAggregate")
+addCommandAlias("ghDocs", ";tests/testOnly -- html html.nostats;makeSite;ghpagesPushSite")
