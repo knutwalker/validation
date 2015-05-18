@@ -261,6 +261,16 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
     map(_ ⇒ x)
 
   /**
+   * Discards the valid value if this is a valid Result.
+   *
+   * @group Transform
+   * @return the result with the valid value set to Unit
+   * @since 0.2.0
+   */
+  def void: Result[E, Unit] =
+    as(())
+
+  /**
    * Continues validation with the provided function
    * if this is a valid `Result`.
    *
