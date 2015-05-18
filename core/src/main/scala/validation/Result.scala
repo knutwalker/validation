@@ -811,6 +811,9 @@ object Result {
         def tupled(implicit X: Mergeable[X]): Result[X, (A, B, C, D)] =
           apply(Tuple4.apply)
 
+        def and[E](e: Result[X, E]): Ap5[E] =
+          new Ap5(e)
+
         class Ap5[E](e: Result[X, E]) {
 
           def apply[F](fn: (A, B, C, D, E) ⇒ F)(implicit X: Mergeable[X]): Result[X, F] =
@@ -818,6 +821,9 @@ object Result {
 
           def tupled(implicit X: Mergeable[X]): Result[X, (A, B, C, D, E)] =
             apply(Tuple5.apply)
+
+          def and[F](f: Result[X, F]): Ap6[F] =
+            new Ap6(f)
 
           class Ap6[F](f: Result[X, F]) {
 
@@ -827,6 +833,9 @@ object Result {
             def tupled(implicit X: Mergeable[X]): Result[X, (A, B, C, D, E, F)] =
               apply(Tuple6.apply)
 
+            def and[G](g: Result[X, G]): Ap7[G] =
+              new Ap7(g)
+
             class Ap7[G](g: Result[X, G]) {
 
               def apply[H](fn: (A, B, C, D, E, F, G) ⇒ H)(implicit X: Mergeable[X]): Result[X, H] =
@@ -835,6 +844,9 @@ object Result {
               def tupled(implicit X: Mergeable[X]): Result[X, (A, B, C, D, E, F, G)] =
                 apply(Tuple7.apply)
 
+              def and[H](h: Result[X, H]): Ap8[H] =
+                new Ap8(h)
+
               class Ap8[H](h: Result[X, H]) {
 
                 def apply[J](fn: (A, B, C, D, E, F, G, H) ⇒ J)(implicit X: Mergeable[X]): Result[X, J] =
@@ -842,6 +854,9 @@ object Result {
 
                 def tupled(implicit X: Mergeable[X]): Result[X, (A, B, C, D, E, F, G, H)] =
                   apply(Tuple8.apply)
+
+                def and[J](j: Result[X, J]): Ap9[J] =
+                  new Ap9(j)
 
                 class Ap9[J](i: Result[X, J]) {
 
