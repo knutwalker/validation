@@ -751,32 +751,45 @@ object Result {
     catching[NumberFormatException].run(s.toShort)
 
   /**
+   * Traverses over `xs` and accumulates all results.
+   *
    * @group Combine
-   * @param xs
-   * @param f
-   * @param E
-   * @param cbf
-   * @tparam A
-   * @tparam B
-   * @tparam E
-   * @tparam F
-   * @tparam That
-   * @return
-   * @usecase def traverse[A, B, E](xs: List[A])(f: A => Result[E, B]): Result[E, List[B] ] = ???
+   * @param xs a collection of values
+   * @param f function to validate a single value
+   * @tparam A the collection type
+   * @tparam B the resulting valid type
+   * @tparam E the resulting invalid type
+   * @return A Result with all valid values or all invalid ones
+   * @usecase def traverse[A, B, E](xs: Seq[A])(f: A => Result[E, B]): Result[E, Seq[B]\]
    *          @inheritdoc
    */
   def traverse[A, B, E, F[X] <: TraversableOnce[X], That](xs: F[A])(f: A => Result[E, B])(implicit E: Mergeable[E], cbf: CanBuildFrom[F[A], B, That]): Result[E, That] =
     xs.foldLeft(valid[E, mutable.Builder[B, That]](cbf(xs)))((acc, r) ⇒ f(r)(acc.map(b ⇒ b += _))).map(_.result())
 
   /**
+   * Traverses over `xs` accumulating all invalids but discarding all valid values.
+   *
    * @group Combine
-   * @param xs
-   * @param E
-   * @param cbf
-   * @tparam A
-   * @tparam E
-   * @tparam F
-   * @return
+   * @param xs a collection of values
+   * @param f function to validate a single value
+   * @tparam A the collection type
+   * @tparam E the resulting invalid type
+   * @return A Result with all invalid values or Unit
+   * @since 0.2.0
+   */
+  def traverse_[A, E](xs: TraversableOnce[A])(f: A => Result[E, Unit])(implicit E: Mergeable[E]): Result[E, Unit] =
+    xs.foldLeft(valid[E, Unit](()))((a, r) ⇒ f(r)(a.map(ಠ ⇒ _ ⇒ ಠ)))
+
+  /**
+   * Transforms a sequence of Results into a Result of a sequence.
+   *
+   * @group Combine
+   * @param xs a collection of results
+   * @tparam A the resulting valid type
+   * @tparam E the resulting invalid type
+   * @return A Result with all valid values or all invalid ones
+   * @usecase def sequence[A, E](xs: Seq[Result[E, A]\]): Result[E, Seq[A]\]
+   *          @inheritdoc
    */
   def sequence[A, E, F[X] <: TraversableOnce[X]](xs: F[Result[E, A]])(implicit E: Mergeable[E], cbf: CanBuildFrom[F[Result[E, A]], A, F[A]]): Result[E, F[A]] =
     traverse(xs)(x ⇒ x)
