@@ -876,7 +876,7 @@ object Result {
 
   object symbolic {
 
-    implicit final class SymbolicOps[E, A](private val r: Result[E, A]) extends AnyVal {
+    implicit final class SymbolicOps[E, A](val r: Result[E, A]) extends AnyVal {
 
       def |@|[EE >: E, AA >: A, B, C](other: Result[EE, B])(implicit EE: Mergeable[EE]): Result.Ap2[EE, AA, B] =
         r.and(other)
@@ -948,7 +948,7 @@ object Result {
 
   object unsafe {
 
-    implicit final class UnsafeOps[E, A](private val r: Result[E, A]) extends AnyVal {
+    implicit final class UnsafeResultOps[E, A](val r: Result[E, A]) extends AnyVal {
 
       def foreach(f: A ⇒ Unit): Unit =
         r.fold(_ ⇒ (), f)
@@ -966,7 +966,7 @@ object Result {
 
   object syntax {
 
-    implicit final class ResultSyntax[A](private val self: A) extends AnyVal {
+    implicit final class ResultSyntax[A](val self: A) extends AnyVal {
 
       def valid[E]: Result[E, A] =
         Result.valid(self)
@@ -1005,8 +1005,8 @@ object Result {
     implicit def ap8SymbolicOps[X, A, B, C, D, E, F, G, H](r: Ap2[X, A, B]#Ap3[C]#Ap4[D]#Ap5[E]#Ap6[F]#Ap7[G]#Ap8[H]): Ap8SymbolicOps[X, A, B, C, D, E, F, G, H] =
       new Ap8SymbolicOps(r)
 
-    implicit def unsafeOps[E, A](r: Result[E, A]): UnsafeOps[E, A] =
-      new UnsafeOps(r)
+    implicit def unsafeOps[E, A](r: Result[E, A]): UnsafeResultOps[E, A] =
+      new UnsafeResultOps(r)
 
     implicit def resultSyntax[A](self: A): ResultSyntax[A] =
       new ResultSyntax(self)
