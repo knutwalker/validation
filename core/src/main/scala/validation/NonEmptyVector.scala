@@ -204,6 +204,12 @@ object NonEmptyVector {
         f(nev.head)
         nev.tail.foreach(f)
       }
+
+      def reduceRight[B >: A](f: (A, ⇒ B) ⇒ B): B =
+        reduceRight0(f, nev.head, nev.tail)
+
+      private def reduceRight0[B >: A](f: (A, ⇒ B) ⇒ B, z: A, tl: Vector[A]): B =
+        if (tl.isEmpty) z else f(z, reduceRight0(f, tl.head, tl.tail))
     }
   }
 }
