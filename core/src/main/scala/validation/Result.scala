@@ -304,6 +304,19 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
     fold(es ⇒ Result.valid(f(es.head)), _ ⇒ this)
 
   /**
+   * Transforms an invalid Result into a valid one.
+   *
+   * @group Transform
+   * @param f the function to transform all invalid values into a valid one
+   * @return a result that is always valid
+   * @since 0.2.0
+   * @usecase def recoverAll(f: NonEmptyVector[E] ⇒ A): Result[E, A]
+   *          @inheritdoc
+   */
+  def recoverAll[AA >: A](f: NonEmptyVector[E] ⇒ AA): Result[E, AA] =
+    fold(es ⇒ Result.valid(f(es)), _ ⇒ this)
+
+  /**
    * Continues validation with the provided function
    * if this is an invalid `Result`.
    *
