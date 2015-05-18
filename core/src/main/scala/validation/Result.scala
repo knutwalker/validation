@@ -825,7 +825,7 @@ object Result {
   /**
    * Curried [[Result]] type, starting with the invalid part.
    *
-   * This can be used to avoid type lambas:
+   * This can be used to avoid type lambdas:
    *
    * {{{
    *   // instead of
@@ -844,7 +844,7 @@ object Result {
   /**
    * Curried [[Result]] type, starting with the valid part.
    *
-   * This can be used to avoid type lambas:
+   * This can be used to avoid type lambdas:
    *
    * {{{
    *   // instead of
