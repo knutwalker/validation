@@ -924,15 +924,17 @@ object Result {
 
   object symbolic {
 
-    implicit final class SymbolicOps[E, A](val r: Result[E, A]) extends AnyVal {
+    type \?/[+E, +A] = Result[E, A]
 
-      def |@|[EE >: E, AA >: A, B, C](other: Result[EE, B]): Result.Ap2[EE, AA, B] =
+    implicit final class SymbolicOps[E, A](val r: E \?/ A) extends AnyVal {
+
+      def |@|[EE >: E, AA >: A, B, C](other: EE \?/ B): Result.Ap2[EE, AA, B] =
         r.and(other)
 
-      def unary_~ : Result[A, NonEmptyVector[E]] =
+      def unary_~ : A \?/ NonEmptyVector[E] =
         r.swap
 
-      def ~[EE, AA](f: Result[A, NonEmptyVector[E]] ⇒ Result[AA, NonEmptyVector[EE]]): Result[EE, NonEmptyVector[AA]] =
+      def ~[EE, AA](f: A \?/ NonEmptyVector[E] ⇒ AA \?/ NonEmptyVector[EE]): EE \?/ NonEmptyVector[AA] =
         r.swapped(f)
 
       def |[AA >: A](aa: ⇒ AA): AA =
@@ -941,55 +943,55 @@ object Result {
       def ?[AA >: A](x: NonEmptyVector[E] ⇒ AA): AA =
         r.valueOr(x)
 
-      def |||[EE >: E, AA >: A](other: ⇒ Result[EE, AA]): Result[EE, AA] =
+      def |||[EE >: E, AA >: A](other: ⇒ EE \?/ AA): EE \?/ AA =
         r.orElse(other)
 
-      def +++[EE >: E, AA >: A](other: ⇒ Result[EE, AA]): Result[EE, NonEmptyVector[AA]] =
+      def +++[EE >: E, AA >: A](other: ⇒ EE \?/ AA): EE \?/ NonEmptyVector[AA] =
         r.merge(other)
 
-      def +|+[EE >: E, AA >: A](other: ⇒ Result[EE, AA]): Result[EE, NonEmptyVector[AA]] =
+      def +|+[EE >: E, AA >: A](other: ⇒ EE \?/ AA): EE \?/ NonEmptyVector[AA] =
         r.append(other)
     }
 
     implicit final class Ap2SymbolicOps[X, A, B](val r: Ap2[X, A, B]) extends AnyVal {
 
-      def |@|[C](c: Result[X, C]): r.Ap3[C] =
+      def |@|[C](c: X \?/ C): r.Ap3[C] =
         r.and(c)
     }
 
     implicit final class Ap3SymbolicOps[X, A, B, C](val r: Ap2[X, A, B]#Ap3[C]) extends AnyVal {
 
-      def |@|[D](d: Result[X, D]): r.Ap4[D] =
+      def |@|[D](d: X \?/ D): r.Ap4[D] =
         r.and(d)
     }
 
     implicit final class Ap4SymbolicOps[X, A, B, C, D](val r: Ap2[X, A, B]#Ap3[C]#Ap4[D]) extends AnyVal {
 
-      def |@|[E](e: Result[X, E]): r.Ap5[E] =
+      def |@|[E](e: X \?/ E): r.Ap5[E] =
         new r.Ap5(e)
     }
 
     implicit final class Ap5SymbolicOps[X, A, B, C, D, E](val r: Ap2[X, A, B]#Ap3[C]#Ap4[D]#Ap5[E]) extends AnyVal {
 
-      def |@|[F](e: Result[X, F]): r.Ap6[F] =
+      def |@|[F](e: X \?/ F): r.Ap6[F] =
         new r.Ap6(e)
     }
 
     implicit final class Ap6SymbolicOps[X, A, B, C, D, E, F](val r: Ap2[X, A, B]#Ap3[C]#Ap4[D]#Ap5[E]#Ap6[F]) extends AnyVal {
 
-      def |@|[G](e: Result[X, G]): r.Ap7[G] =
+      def |@|[G](e: X \?/ G): r.Ap7[G] =
         new r.Ap7(e)
     }
 
     implicit final class Ap7SymbolicOps[X, A, B, C, D, E, F, G](val r: Ap2[X, A, B]#Ap3[C]#Ap4[D]#Ap5[E]#Ap6[F]#Ap7[G]) extends AnyVal {
 
-      def |@|[H](e: Result[X, H]): r.Ap8[H] =
+      def |@|[H](e: X \?/ H): r.Ap8[H] =
         new r.Ap8(e)
     }
 
     implicit final class Ap8SymbolicOps[X, A, B, C, D, E, F, G, H](val r: Ap2[X, A, B]#Ap3[C]#Ap4[D]#Ap5[E]#Ap6[F]#Ap7[G]#Ap8[H]) extends AnyVal {
 
-      def |@|[J](e: Result[X, J]): r.Ap9[J] =
+      def |@|[J](e: X \?/ J): r.Ap9[J] =
         new r.Ap9(e)
     }
   }
