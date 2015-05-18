@@ -248,6 +248,19 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
     bimap(f, identity)
 
   /**
+   * Sets the valid value to `x` and discards the previous value
+   * if this is a valid Result.
+   *
+   * @group Transform
+   * @param x the new valid value
+   * @tparam B the resulting valid type
+   * @return the result with the valid value set to `x`
+   * @since 0.2.0
+   */
+  def as[B](x: ⇒ B): Result[E, B] =
+    map(_ ⇒ x)
+
+  /**
    * Continues validation with the provided function
    * if this is a valid `Result`.
    *
