@@ -41,7 +41,7 @@
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
-        <span class="modifier"></span>
+        <span class="modifier">sealed </span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
@@ -49,7 +49,11 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Curried <a href="Result.html" class="extype" name="validation.Result">Result</a> type, starting with the invalid part.</p><p>This can be used to avoid type lambas:</p><pre><span class="cmt">// instead of</span>
+<span class="kw">type</span> FR[+E] = Functor[({<span class="kw">type</span> ￎﾻ[ￎﾱ] = Result[E, ￎﾱ]})#ￎﾻ]
+<span class="cmt">// rather use</span>
+<span class="kw">type</span> FR[+E] = Functor[Result.I[E]#V]</pre></div><dl class="paramcmts block"><dt class="tparam">E</dt><dd class="cmt"><p>the resulting invalid type
+</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block diagram-container" id="inheritance-diagram-container">

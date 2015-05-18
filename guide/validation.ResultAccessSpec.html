@@ -45,20 +45,20 @@
 <ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).getOrElse(1337) ==== 1337</code></li></ul>
 <p><br/></p>
 <h6 id="with-valueor"><strong>with valueOr</strong></h6>
-<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).valueOr(identity) ==== 42</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).valueOr(identity) ==== 1337</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).valueOr(_.head) ==== 42</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).valueOr(_.head) ==== 1337</code></li></ul>
 <p><br/></p>
 <h6 id="with-fold"><strong>with fold</strong></h6>
-<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).fold(identity, identity) ==== 42</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).fold(identity, identity) ==== 1337</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).fold(_.head, identity) ==== 42</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).fold(_.head, identity) ==== 1337</code></li></ul>
 <p><br/></p>
 <h6 id="with-validinvalid-curried-fold"><strong>with valid/invalid (curried fold)</strong></h6>
-<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).valid(identity)(identity) ==== 42</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).valid(identity)(identity) ==== 1337</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).valid(identity)(_.head) ==== 42</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).valid(identity)(_.head) ==== 1337</code></li></ul>
 <p><br/></p>
 <h6 id="with-invalidvalid-curried-fold"><strong>with invalid/valid (curried fold)</strong></h6>
-<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).invalid(identity)(identity) ==== 42</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).invalid(identity)(identity) ==== 1337</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).invalid(_.head)(identity) ==== 42</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).invalid(_.head)(identity) ==== 1337</code></li></ul>
 <p><br/></p>
 <h6 id="with-foldleft"><strong>with foldLeft</strong></h6>
 <ul><li class="example success ok"><code class="prettyprint">Result.valid(42).foldLeft(1337)((b, a) ⇒ a) ==== 42</code></li></ul>

@@ -44,19 +44,19 @@
 <ul><li class="example success ok"><code class="prettyprint">Result.valid(1337).apply[Int, Int](Result.valid(_ - 1295)) ==== Valid(42)</code></li></ul>
 <ul><li class="example success ok"><code class="prettyprint">Result.valid(42).apply(Result.invalid(1337)) ==== Invalid(1337)</code></li></ul>
 <ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).apply(Result.valid((_: Int) - 1295)) ==== Invalid(1337)</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).apply(Result.invalid(1295)) ==== Invalid(1337)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).apply(Result.invalid(1337)) ==== Invalids(NonEmptyVector.of(1337, 42))</code></li></ul>
 <p><br/></p>
 <h6 id="and-accumulates-invalids-and-combines-valids"><strong>and accumulates invalids and combines valids</strong></h6>
 <ul><li class="example success ok"><code class="prettyprint">Result.valid[Int, Int](1337).and(Result.valid(1295)).apply(_ - _) ==== Valid(42)</code></li></ul>
 <ul><li class="example success ok"><code class="prettyprint">Result.valid(42).and(Result.invalid(1337)).apply(_ - (_: Int)) ==== Invalid(1337)</code></li></ul>
 <ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).and(Result.valid(1295)).apply((_: Int) - _) ==== Invalid(1337)</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).and(Result.invalid(1295)).apply((_: Int) - (_: Int)) ==== Invalid(1337)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).and(Result.invalid(1337)).apply((_: Int) - (_: Int)) ==== Invalids(NonEmptyVector.of(42, 1337))</code></li></ul>
 <p><br/></p>
 <h6 id="zip-accumulates-invalids-and-tuples-valids"><strong>zip accumulates invalids and tuples valids</strong></h6>
 <ul><li class="example success ok"><code class="prettyprint">Result.valid[Int, Int](42).zip(Result.valid(42)) ==== Valid((42, 42))</code></li></ul>
 <ul><li class="example success ok"><code class="prettyprint">Result.valid(42).zip(Result.invalid(1337)) ==== Invalid(1337)</code></li></ul>
 <ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).zip(Result.valid(42)) ==== Invalid(1337)</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).zip(Result.invalid(1295)) ==== Invalid(1337)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).zip(Result.invalid(1337)) ==== Invalids(NonEmptyVector.of(42, 1337))</code></li></ul>
 <p><br/></p>
 <h6 id="orelse-is-a-alternative"><strong>orElse is a alternative</strong></h6>
 <ul><li class="example success ok"><code class="prettyprint">Result.valid(42).orElse(Result.valid(1337)) ==== Valid(42)</code></li></ul>
@@ -65,16 +65,16 @@
 <ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).orElse(Result.invalid(1337)) ==== Invalid(1337)</code></li></ul>
 <p><br/></p>
 <h6 id="merge-accumulates-either-two-valids-or-invalids-and-otherwise-returns-the-invalid"><strong>merge accumulates either two valids or invalids and otherwise returns the invalid</strong></h6>
-<ul><li class="example success ok"><code class="prettyprint">Result.valid[Int, Int](1337).merge(Result.valid(-1295)) ==== Valid(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid[Int, Int](1337).merge(Result.valid(42)) ==== Valid(NonEmptyVector.of(1337, 42))</code></li></ul>
 <ul><li class="example success ok"><code class="prettyprint">Result.valid(42).merge(Result.invalid(1337)) ==== Invalid(1337)</code></li></ul>
 <ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).merge(Result.valid(42)) ==== Invalid(1337)</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid[Int, Int](42).merge(Result.invalid(1295)) ==== Invalid(1337)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid[Int, Int](42).merge(Result.invalid(1337)) ==== Invalids(NonEmptyVector.of(1337, 42))</code></li></ul>
 <p><br/></p>
 <h6 id="append-accumulates-either-two-valids-or-invalids-and-otherwise-returns-the-valid"><strong>append accumulates either two valids or invalids and otherwise returns the valid</strong></h6>
-<ul><li class="example success ok"><code class="prettyprint">Result.valid[Int, Int](1337).append(Result.valid(-1295)) ==== Valid(42)</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).append(Result.invalid(1337)) ==== Valid(42)</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).append(Result.valid(42)) ==== Valid(42)</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid[Int, Int](42).append(Result.invalid(1295)) ==== Invalid(1337)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid[Int, Int](1337).append(Result.valid(42)) ==== Valid(NonEmptyVector.of(1337, 42))</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).append(Result.invalid(1337)) ==== Valid(NonEmptyVector.of(42))</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).append(Result.valid(42)) ==== Valid(NonEmptyVector.of(42))</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid[Int, Int](42).append(Result.invalid(1337)) ==== Invalids(NonEmptyVector.of(1337, 42))</code></li></ul>
 <p><br/></p>
 </div>
 

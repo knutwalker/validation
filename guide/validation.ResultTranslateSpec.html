@@ -66,7 +66,7 @@
 <p><br/></p>
 <h6 id="to-either"><strong>to Either</strong></h6>
 <ul><li class="example success ok"><code class="prettyprint">Result.valid(42).toEither ==== Right(42)</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).toEither ==== Left(1337)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(1337).toEither ==== Left(NonEmptyVector(1337))</code></li></ul>
 <p><br/></p>
 <h6 id="to-try"><strong>to Try</strong></h6>
 <ul><li class="example success ok"><code class="prettyprint">Result.valid(42).toTry ==== Success(42)</code></li></ul>

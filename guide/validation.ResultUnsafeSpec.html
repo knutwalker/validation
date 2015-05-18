@@ -50,7 +50,7 @@
 <ul><li class="example success ok"><code class="prettyprint">typecheck(&quot;Result.valid(42).getInvalid&quot;) must failWith(&quot;value getInvalid is not a member of validation.Result&quot;)</code></li></ul>
 <ul><li class="example success ok"><code class="prettyprint">typecheck(&quot;Result.invalid(1337).getInvalid&quot;) must failWith(&quot;value getInvalid is not a member of validation.Result&quot;)</code></li></ul>
 <ul><li class="example success ok"><code class="prettyprint">{import Result.unsafe._; Result.valid[Int, Int](42).getInvalid must throwA[RuntimeException](message = &quot;Result.valid&quot;)}</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">{import Result.unsafe._; Result.invalid[Int, Int](1337).getInvalid ==== 1337}</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">{import Result.unsafe._; Result.invalid[Int, Int](1337).getInvalid ==== NonEmptyVector(1337)}</code></li></ul>
 <p><br/></p>
 <h6 id="foreach-is-an-unsafe-operation"><strong>foreach is an unsafe operation</strong></h6>
 <ul><li class="example success ok"><code class="prettyprint">typecheck(&quot;Result.valid(42).foreach(_ ==== 42)&quot;) must failWith(&quot;value foreach is not a member of validation.Result&quot;)</code></li></ul>

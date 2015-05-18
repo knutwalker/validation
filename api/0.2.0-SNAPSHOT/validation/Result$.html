@@ -129,12 +129,12 @@
       </a>
     </span>
       
-    </li><li name="validation.Result.I" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+    </li><li name="validation.Result.I" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="I[E]extendsAnyRef"></a>
       <a id="I[E]:I[E]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier"></span>
+        <span class="modifier">sealed </span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
@@ -145,7 +145,11 @@
         <img src="../lib/permalink.png" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Curried <a href="Result.html" class="extype" name="validation.Result">Result</a> type, starting with the invalid part.</p><div class="fullcomment"><div class="comment cmt"><p>Curried <a href="Result.html" class="extype" name="validation.Result">Result</a> type, starting with the invalid part.</p><p>This can be used to avoid type lambas:</p><pre><span class="cmt">// instead of</span>
+<span class="kw">type</span> FR[+E] = Functor[({<span class="kw">type</span> ￎﾻ[ￎﾱ] = Result[E, ￎﾱ]})#ￎﾻ]
+<span class="cmt">// rather use</span>
+<span class="kw">type</span> FR[+E] = Functor[Result.I[E]#V]</pre></div><dl class="paramcmts block"><dt class="tparam">E</dt><dd class="cmt"><p>the resulting invalid type
+</p></dd></dl></div>
     </li><li name="validation.Result.Invalid" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Invalid[+E]extendsResult[E,Nothing]withProductwithSerializable"></a>
       <a id="Invalid[+E]:Invalid[E]"></a>
@@ -163,12 +167,29 @@
       </a>
     </span>
       
-    </li><li name="validation.Result.V" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+    </li><li name="validation.Result.Invalids" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Invalids[+E]extendsResult[E,Nothing]withProductwithSerializable"></a>
+      <a id="Invalids[+E]:Invalids[E]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Result$$Invalids.html"><span class="name">Invalids</span></a><span class="tparams">[<span name="E">+E</span>]</span><span class="params">(<span name="error">error: <a href="NonEmptyVector.html" class="extype" name="validation.NonEmptyVector">NonEmptyVector</a>[<span class="extype" name="validation.Result.Invalids.E">E</span>]</span>)</span><span class="result"> extends <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.Invalids.E">E</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Nothing" class="extype" target="_top">Nothing</a>] with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../index.html#validation.Result$@Invalids[+E]extendsResult[E,Nothing]withProductwithSerializable" title="Permalink" target="_top">
+        <img src="../lib/permalink.png" />
+      </a>
+    </span>
+      
+    </li><li name="validation.Result.V" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="V[A]extendsAnyRef"></a>
       <a id="V[A]:V[A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier"></span>
+        <span class="modifier">sealed </span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
@@ -179,7 +200,11 @@
         <img src="../lib/permalink.png" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Curried <a href="Result.html" class="extype" name="validation.Result">Result</a> type, starting with the valid part.</p><div class="fullcomment"><div class="comment cmt"><p>Curried <a href="Result.html" class="extype" name="validation.Result">Result</a> type, starting with the valid part.</p><p>This can be used to avoid type lambas:</p><pre><span class="cmt">// instead of</span>
+<span class="kw">type</span> FR[+A] = Functor[({<span class="kw">type</span> ￎﾻ[ￎﾱ] = Result[ￎﾱ, A]})#ￎﾻ]
+<span class="cmt">// rather use</span>
+<span class="kw">type</span> FR[+A] = Functor[Result.V[A]#I]</pre></div><dl class="paramcmts block"><dt class="tparam">A</dt><dd class="cmt"><p>the resulting valid type
+</p></dd></dl></div>
     </li><li name="validation.Result.Valid" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Valid[+A]extendsResult[Nothing,A]withProductwithSerializable"></a>
       <a id="Valid[+A]:Valid[A]"></a>
@@ -511,6 +536,24 @@
     </span>
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="tparam">E</dt><dd class="cmt"></dd><dt class="tparam">A</dt><dd class="cmt"></dd><dt class="param">e</dt><dd class="cmt"></dd><dt>returns</dt><dd class="cmt"><p>
 </p></dd></dl></div>
+    </li><li name="validation.Result#invalids" visbl="pub" data-isabs="false" fullComment="yes" group="Create">
+      <a id="invalids[E,A](es:validation.NonEmptyVector[E]):validation.Result[E,A]"></a>
+      <a id="invalids[E,A](NonEmptyVector[E]):Result[E,A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">invalids</span><span class="tparams">[<span name="E">E</span>, <span name="A">A</span>]</span><span class="params">(<span name="es">es: <a href="NonEmptyVector.html" class="extype" name="validation.NonEmptyVector">NonEmptyVector</a>[<span class="extype" name="validation.Result.invalids.E">E</span>]</span>)</span><span class="result">: <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.invalids.E">E</span>, <span class="extype" name="validation.Result.invalids.A">A</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../index.html#validation.Result$@invalids[E,A](es:validation.NonEmptyVector[E]):validation.Result[E,A]" title="Permalink" target="_top">
+        <img src="../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="tparam">E</dt><dd class="cmt"></dd><dt class="tparam">A</dt><dd class="cmt"></dd><dt class="param">es</dt><dd class="cmt"></dd><dt>returns</dt><dd class="cmt"><p>
+</p></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -688,23 +731,37 @@
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">s</dt><dd class="cmt"></dd><dt>returns</dt><dd class="cmt"><p>
 </p></dd></dl></div>
     </li><li name="validation.Result#sequence" visbl="pub" data-isabs="false" fullComment="yes" group="Combine">
-      <a id="sequence[A,E,F[X]&lt;:TraversableOnce[X]](xs:F[validation.Result[E,A]])(implicitE:validation.Mergeable[E],implicitcbf:scala.collection.generic.CanBuildFrom[F[validation.Result[E,A]],A,F[A]]):validation.Result[E,F[A]]"></a>
-      <a id="sequence[A,E,F[X]&lt;:TraversableOnce[X]](F[Result[E,A]])(Mergeable[E],CanBuildFrom[F[Result[E,A]],A,F[A]]):Result[E,F[A]]"></a>
+      <a id="sequence[A,E](xs:Seq[validation.Result[E,A]]):validation.Result[E,Seq[A]]"></a>
+      <a id="sequence[A,E](Seq[Result[E,A]]):Result[E,Seq[A]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">sequence</span><span class="tparams">[<span name="A">A</span>, <span name="E">E</span>, <span name="F">F<span class="tparams">[<span name="X">X</span>]</span> &lt;: <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="validation.Result.sequence.F.X">X</span>]</span>]</span><span class="params">(<span name="xs">xs: <span class="extype" name="validation.Result.sequence.F">F</span>[<a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.sequence.E">E</span>, <span class="extype" name="validation.Result.sequence.A">A</span>]]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="E">E: <a href="Mergeable.html" class="extype" name="validation.Mergeable">Mergeable</a>[<span class="extype" name="validation.Result.sequence.E">E</span>]</span>, <span name="cbf">cbf: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.collection.generic.CanBuildFrom" class="extype" target="_top">CanBuildFrom</a>[<span class="extype" name="validation.Result.sequence.F">F</span>[<a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.sequence.E">E</span>, <span class="extype" name="validation.Result.sequence.A">A</span>]], <span class="extype" name="validation.Result.sequence.A">A</span>, <span class="extype" name="validation.Result.sequence.F">F</span>[<span class="extype" name="validation.Result.sequence.A">A</span>]]</span>)</span><span class="result">: <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.sequence.E">E</span>, <span class="extype" name="validation.Result.sequence.F">F</span>[<span class="extype" name="validation.Result.sequence.A">A</span>]]</span>
+        <span class="name">sequence</span><span class="tparams">[<span name="A">A</span>, <span name="E">E</span>]</span><span class="params">(<span name="xs">xs: <span class="extype" name="scala.Seq">Seq</span>[<a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.sequence.E">E</span>, <span class="extype" name="validation.Result.sequence.A">A</span>]]</span>)</span><span class="result">: <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.sequence.E">E</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="validation.Result.sequence.A">A</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#validation.Result$@sequence[A,E,F[X]&lt;:TraversableOnce[X]](xs:F[validation.Result[E,A]])(implicitE:validation.Mergeable[E],implicitcbf:scala.collection.generic.CanBuildFrom[F[validation.Result[E,A]],A,F[A]]):validation.Result[E,F[A]]" title="Permalink" target="_top">
+      <a href="../index.html#validation.Result$@sequence[A,E](xs:Seq[validation.Result[E,A]]):validation.Result[E,Seq[A]]" title="Permalink" target="_top">
         <img src="../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="tparam">A</dt><dd class="cmt"></dd><dt class="tparam">E</dt><dd class="cmt"></dd><dt class="tparam">F</dt><dd class="cmt"></dd><dt class="param">xs</dt><dd class="cmt"></dd><dt class="param">E</dt><dd class="cmt"></dd><dt class="param">cbf</dt><dd class="cmt"></dd><dt>returns</dt><dd class="cmt"><p>
-</p></dd></dl></div>
+      <p class="shortcomment cmt">[use case] Transforms a sequence of Results into a Result of a sequence.</p><div class="fullcomment">[use case] <div class="comment cmt"><p>Transforms a sequence of Results into a Result of a sequence.</p></div><dl class="paramcmts block"><dt class="tparam">A</dt><dd class="cmt"><p>the resulting valid type
+</p></dd><dt class="tparam">E</dt><dd class="cmt"><p>the resulting invalid type
+</p></dd><dt class="param">xs</dt><dd class="cmt"><p>a collection of results
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Result with all valid values or all invalid ones
+</p></dd></dl><dl class="attributes block"> <div class="full-signature-block toggleContainer">
+            <span class="toggle">Full Signature</span>
+            <div class="hiddenContent full-signature-usecase"><h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sequence</span><span class="tparams">[<span name="A">A</span>, <span name="E">E</span>, <span name="F">F<span class="tparams">[<span name="X">X</span>]</span> &lt;: <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="validation.Result.sequence.F.X">X</span>]</span>]</span><span class="params">(<span name="xs">xs: <span class="extype" name="validation.Result.sequence.F">F</span>[<a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.sequence.E">E</span>, <span class="extype" name="validation.Result.sequence.A">A</span>]]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="cbf">cbf: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.collection.generic.CanBuildFrom" class="extype" target="_top">CanBuildFrom</a>[<span class="extype" name="validation.Result.sequence.F">F</span>[<a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.sequence.E">E</span>, <span class="extype" name="validation.Result.sequence.A">A</span>]], <span class="extype" name="validation.Result.sequence.A">A</span>, <span class="extype" name="validation.Result.sequence.F">F</span>[<span class="extype" name="validation.Result.sequence.A">A</span>]]</span>)</span><span class="result">: <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.sequence.E">E</span>, <span class="extype" name="validation.Result.sequence.F">F</span>[<span class="extype" name="validation.Result.sequence.A">A</span>]]</span>
+      </span>
+      </h4></div>
+          </div></dl></div>
     </li><li name="validation.Result.symbolic" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="symbolic"></a>
       <a id="symbolic:symbolic"></a>
@@ -774,27 +831,27 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="validation.Result#traverse" visbl="pub" data-isabs="false" fullComment="yes" group="Combine">
-      <a id="traverse[A,B,E](xs:List[A])(f:A=&gt;validation.Result[E,B]):validation.Result[E,List[B]]"></a>
-      <a id="traverse[A,B,E](List[A])((A)⇒Result[E,B]):Result[E,List[B]]"></a>
+      <a id="traverse[A,B,E](xs:Seq[A])(f:A=&gt;validation.Result[E,B]):validation.Result[E,Seq[B]]"></a>
+      <a id="traverse[A,B,E](Seq[A])((A)⇒Result[E,B]):Result[E,Seq[B]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">traverse</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>, <span name="E">E</span>]</span><span class="params">(<span name="xs">xs: <span class="extype" name="scala.List">List</span>[<span class="extype" name="validation.Result.traverse.A">A</span>]</span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="validation.Result.traverse.A">A</span>) ⇒ <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.traverse.E">E</span>, <span class="extype" name="validation.Result.traverse.B">B</span>]</span>)</span><span class="result">: <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.traverse.E">E</span>, <span class="extype" name="scala.List">List</span>[<span class="extype" name="validation.Result.traverse.B">B</span>]]</span>
+        <span class="name">traverse</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>, <span name="E">E</span>]</span><span class="params">(<span name="xs">xs: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="validation.Result.traverse.A">A</span>]</span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="validation.Result.traverse.A">A</span>) ⇒ <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.traverse.E">E</span>, <span class="extype" name="validation.Result.traverse.B">B</span>]</span>)</span><span class="result">: <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.traverse.E">E</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="validation.Result.traverse.B">B</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../index.html#validation.Result$@traverse[A,B,E](xs:List[A])(f:A=&gt;validation.Result[E,B]):validation.Result[E,List[B]]" title="Permalink" target="_top">
+      <a href="../index.html#validation.Result$@traverse[A,B,E](xs:Seq[A])(f:A=&gt;validation.Result[E,B]):validation.Result[E,Seq[B]]" title="Permalink" target="_top">
         <img src="../lib/permalink.png" />
       </a>
     </span>
-      <p class="shortcomment cmt">[use case] </p><div class="fullcomment">[use case] <div class="comment cmt"></div><dl class="paramcmts block"><dt class="tparam">A</dt><dd class="cmt"><p>
-</p></dd><dt class="tparam">B</dt><dd class="cmt"><p>
-</p></dd><dt class="tparam">E</dt><dd class="cmt"><p>
-</p></dd><dt class="param">xs</dt><dd class="cmt"><p>
-</p></dd><dt class="param">f</dt><dd class="cmt"><p>
-</p></dd><dt>returns</dt><dd class="cmt"><p>
+      <p class="shortcomment cmt">[use case] Traverses over <code>xs</code> and accumulates all results.</p><div class="fullcomment">[use case] <div class="comment cmt"><p>Traverses over <code>xs</code> and accumulates all results.</p></div><dl class="paramcmts block"><dt class="tparam">A</dt><dd class="cmt"><p>the collection type
+</p></dd><dt class="tparam">B</dt><dd class="cmt"><p>the resulting valid type
+</p></dd><dt class="tparam">E</dt><dd class="cmt"><p>the resulting invalid type
+</p></dd><dt class="param">xs</dt><dd class="cmt"><p>a collection of values
+</p></dd><dt class="param">f</dt><dd class="cmt"><p>function to validate a single value
+</p></dd><dt>returns</dt><dd class="cmt"><p>A Result with all valid values or all invalid ones
 </p></dd></dl><dl class="attributes block"> <div class="full-signature-block toggleContainer">
             <span class="toggle">Full Signature</span>
             <div class="hiddenContent full-signature-usecase"><h4 id="signature" class="signature">
@@ -803,10 +860,29 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">traverse</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>, <span name="E">E</span>, <span name="F">F<span class="tparams">[<span name="X">X</span>]</span> &lt;: <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="validation.Result.traverse.F.X">X</span>]</span>, <span name="That">That</span>]</span><span class="params">(<span name="xs">xs: <span class="extype" name="validation.Result.traverse.F">F</span>[<span class="extype" name="validation.Result.traverse.A">A</span>]</span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="validation.Result.traverse.A">A</span>) ⇒ <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.traverse.E">E</span>, <span class="extype" name="validation.Result.traverse.B">B</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="E">E: <a href="Mergeable.html" class="extype" name="validation.Mergeable">Mergeable</a>[<span class="extype" name="validation.Result.traverse.E">E</span>]</span>, <span name="cbf">cbf: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.collection.generic.CanBuildFrom" class="extype" target="_top">CanBuildFrom</a>[<span class="extype" name="validation.Result.traverse.F">F</span>[<span class="extype" name="validation.Result.traverse.A">A</span>], <span class="extype" name="validation.Result.traverse.B">B</span>, <span class="extype" name="validation.Result.traverse.That">That</span>]</span>)</span><span class="result">: <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.traverse.E">E</span>, <span class="extype" name="validation.Result.traverse.That">That</span>]</span>
+        <span class="name">traverse</span><span class="tparams">[<span name="A">A</span>, <span name="B">B</span>, <span name="E">E</span>, <span name="F">F<span class="tparams">[<span name="X">X</span>]</span> &lt;: <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="validation.Result.traverse.F.X">X</span>]</span>, <span name="That">That</span>]</span><span class="params">(<span name="xs">xs: <span class="extype" name="validation.Result.traverse.F">F</span>[<span class="extype" name="validation.Result.traverse.A">A</span>]</span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="validation.Result.traverse.A">A</span>) ⇒ <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.traverse.E">E</span>, <span class="extype" name="validation.Result.traverse.B">B</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="cbf">cbf: <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.collection.generic.CanBuildFrom" class="extype" target="_top">CanBuildFrom</a>[<span class="extype" name="validation.Result.traverse.F">F</span>[<span class="extype" name="validation.Result.traverse.A">A</span>], <span class="extype" name="validation.Result.traverse.B">B</span>, <span class="extype" name="validation.Result.traverse.That">That</span>]</span>)</span><span class="result">: <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.traverse.E">E</span>, <span class="extype" name="validation.Result.traverse.That">That</span>]</span>
       </span>
       </h4></div>
           </div></dl></div>
+    </li><li name="validation.Result#traverse_" visbl="pub" data-isabs="false" fullComment="yes" group="Combine">
+      <a id="traverse_[A,E](xs:TraversableOnce[A])(f:A=&gt;validation.Result[E,Unit]):validation.Result[E,Unit]"></a>
+      <a id="traverse_[A,E](TraversableOnce[A])((A)⇒Result[E,Unit]):Result[E,Unit]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">traverse_</span><span class="tparams">[<span name="A">A</span>, <span name="E">E</span>]</span><span class="params">(<span name="xs">xs: <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="validation.Result.traverse_.A">A</span>]</span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="validation.Result.traverse_.A">A</span>) ⇒ <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.traverse_.E">E</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a>]</span>)</span><span class="result">: <a href="Result.html" class="extype" name="validation.Result">Result</a>[<span class="extype" name="validation.Result.traverse_.E">E</span>, <a href="http://www.scala-lang.org/api/2.11.6/index.html#scala.Unit" class="extype" target="_top">Unit</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../index.html#validation.Result$@traverse_[A,E](xs:TraversableOnce[A])(f:A=&gt;validation.Result[E,Unit]):validation.Result[E,Unit]" title="Permalink" target="_top">
+        <img src="../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Traverses over <code>xs</code> accumulating all invalids but discarding all valid values.</p><div class="fullcomment"><div class="comment cmt"><p>Traverses over <code>xs</code> accumulating all invalids but discarding all valid values.
+</p></div><dl class="paramcmts block"><dt class="tparam">A</dt><dd class="cmt"><p>the collection type</p></dd><dt class="tparam">E</dt><dd class="cmt"><p>the resulting invalid type</p></dd><dt class="param">xs</dt><dd class="cmt"><p>a collection of values</p></dd><dt class="param">f</dt><dd class="cmt"><p>function to validate a single value</p></dd><dt>returns</dt><dd class="cmt"><p>A Result with all invalid values or Unit</p></dd></dl><dl class="attributes block"> <dt>Since</dt><dd><p>0.2.0
+</p></dd></dl></div>
     </li><li name="validation.Result.unsafe" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="unsafe"></a>
       <a id="unsafe:unsafe"></a>

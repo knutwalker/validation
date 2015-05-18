@@ -69,11 +69,11 @@
 <ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).recoverWith(Function.const(Result.invalid(1337))) ==== Invalid(1337)</code></li></ul>
 <p><br/></p>
 <h6 id="of-swapped-values"><strong>of swapped values</strong></h6>
-<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).swapped(_.map((_: Int) + 1295)) ==== Valid(42)</code></li></ul>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).swapped(_.map(_ + 1295)) ==== Invalid(1337)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.valid(42).swapped(_.map(_ :+ 1337)) ==== Valid(NonEmptyVector.of(42))</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).swapped(_.map(_ :+ 1337)) ==== Invalids(NonEmptyVector.of(42, 1337))</code></li></ul>
 <p><br/></p>
 <h6 id="swap-exchanges-valid-and-invalid"><strong>swap exchanges valid and invalid</strong></h6>
-<ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).swap ==== Valid(42)</code></li></ul>
+<ul><li class="example success ok"><code class="prettyprint">Result.invalid(42).swap ==== Valid(NonEmptyVector(42))</code></li></ul>
 <ul><li class="example success ok"><code class="prettyprint">Result.valid(1337).swap ==== Invalid(1337)</code></li></ul>
 <p><br/></p>
 </div>
