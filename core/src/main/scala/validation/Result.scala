@@ -822,12 +822,38 @@ object Result {
   final case class Invalid[+E](error: E) extends Result[E, Nothing]
   final case class Invalids[+E](error: NonEmptyVector[E]) extends Result[E, Nothing]
 
-  trait I[E] {
+  /**
+   * Curried [[Result]] type, starting with the invalid part.
+   *
+   * This can be used to avoid type lambas:
+   * {{{
+   *   // instead of
+   *   type FR[+E] = Functor[({type λ[α] = Result[E, α]})#λ]
+   *   // rather use
+   *   type FR[+E] = Functor[Result.I[E]#V]
+   * }}}
+   *
+   * @tparam E the resulting invalid type
+   */
+  sealed trait I[E] {
 
     type V[A] = Result[E, A]
   }
 
-  trait V[A] {
+  /**
+   * Curried [[Result]] type, starting with the valid part.
+   *
+   * This can be used to avoid type lambas:
+   * {{{
+   *   // instead of
+   *   type FR[+A] = Functor[({type λ[α] = Result[α, A]})#λ]
+   *   // rather use
+   *   type FR[+A] = Functor[Result.V[A]#I]
+   * }}}
+   *
+   * @tparam A the resulting valid type
+   */
+  sealed trait V[A] {
 
     type I[E] = Result[E, A]
   }
