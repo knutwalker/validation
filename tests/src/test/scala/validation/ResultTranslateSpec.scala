@@ -76,7 +76,7 @@ $br
 ###### **to Either**
 
 ${Result.valid(42).toEither ==== Right(42)}
-${Result.invalid(1337).toEither ==== Left(1337)}
+${Result.invalid(1337).toEither ==== Left(NonEmptyVector(1337))}
 
 $br
 

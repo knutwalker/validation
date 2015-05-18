@@ -17,7 +17,7 @@
 package validation
 
 import org.specs2.Specification
-import validation.Result.{Invalid, Valid}
+import validation.Result.{Invalids, Invalid, Valid}
 
 object ResultTransformSpec extends Specification {
   def is = "Transform Results".title ^ s2"""
@@ -74,14 +74,14 @@ $br
 
 ###### **of swapped values**
 
-${Result.valid(42).swapped(_.map((_: Int) + 1295)) ==== Valid(42)}
-${Result.invalid(42).swapped(_.map(_ + 1295)) ==== Invalid(1337)}
+${Result.valid(42).swapped(_.map(_ :+ 1337)) ==== Valid(NonEmptyVector.of(42))}
+${Result.invalid(42).swapped(_.map(_ :+ 1337)) ==== Invalids(NonEmptyVector.of(42, 1337))}
 
 $br
 
 ###### **swap exchanges valid and invalid**
 
-${Result.invalid(42).swap ==== Valid(42)}
+${Result.invalid(42).swap ==== Valid(NonEmptyVector(42))}
 ${Result.valid(1337).swap ==== Invalid(1337)}
 
 $br

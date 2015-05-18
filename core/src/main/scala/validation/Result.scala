@@ -156,9 +156,10 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    * @tparam B the resulting type
    * @return the result of one of the two functions
    */
-  def fold[B](fe: E ⇒ B, fa: A ⇒ B): B = this match {
-    case Result.Invalid(e) ⇒ fe(e)
-    case Result.Valid(a)   ⇒ fa(a)
+  def fold[B](fe: NonEmptyVector[E] ⇒ B, fa: A ⇒ B): B = this match {
+    case Result.Invalid(e)   ⇒ fe(NonEmptyVector(e))
+    case Result.Invalids(es) ⇒ fe(es)
+    case Result.Valid(a)     ⇒ fa(a)
   }
 
   /**
@@ -170,7 +171,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    * @tparam B the resulting type
    * @return the result of one of the two functions
    */
-  def valid[B](fa: A ⇒ B)(fe: E ⇒ B): B =
+  def valid[B](fa: A ⇒ B)(fe: NonEmptyVector[E] ⇒ B): B =
     fold(fe, fa)
 
   /**
@@ -182,7 +183,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    * @tparam B the resulting type
    * @return the result of one of the two functions
    */
-  def invalid[B](fe: E ⇒ B)(fa: A ⇒ B): B =
+  def invalid[B](fe: NonEmptyVector[E] ⇒ B)(fa: A ⇒ B): B =
     fold(fe, fa)
 
   /**
@@ -219,7 +220,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    * @return the result with either the valid or invalid value transformed
    */
   def bimap[EE, AA](fe: E ⇒ EE, fa: A ⇒ AA): Result[EE, AA] =
-    fold(fe andThen Result.invalid, fa andThen Result.valid)
+    fold(es ⇒ Result.invalids(es.map(fe)), fa andThen Result.valid)
 
   /**
    * Maps over the valid value of this `Result`.
@@ -288,7 +289,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    *          @inheritdoc
    */
   def flatMap[EE >: E, B](f: A ⇒ Result[EE, B]): Result[EE, B] =
-    fold(Result.invalid, f)
+    fold(Result.invalids, f)
 
   /**
    * Transforms an invalid Result into a valid one.
@@ -300,7 +301,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    *          @inheritdoc
    */
   def recover[AA >: A](f: E ⇒ AA): Result[E, AA] =
-    fold(f andThen Result.valid, _ ⇒ this)
+    fold(es ⇒ Result.valid(f(es.head)), _ ⇒ this)
 
   /**
    * Continues validation with the provided function
@@ -316,7 +317,14 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    *          @inheritdoc
    */
   def recoverWith[AA >: A, F](f: E ⇒ Result[F, AA]): Result[F, AA] =
-    fold(f, Result.valid)
+    fold(_.reduce(f)(_ orElse _), Result.valid)
+
+  /**
+   * @group Transform
+   * @return
+   */
+  def nev: Result[E, NonEmptyVector[A]] =
+    map(NonEmptyVector(_))
 
   /**
    * Applies a function in the `Result` context to the valid value,
@@ -326,7 +334,6 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    *
    * @group Combine
    * @param f the function in the `Result` context
-   * @param EE the instance of the `Mergable` type-class for the error type
    * @tparam B the resulting valid type
    * @return the valid result if `this` and `f` are valid
    *         or invalid if one of each is invalid
@@ -334,10 +341,10 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    * @usecase def apply[B](f: Result[E, A ⇒ B]): Result[E, B]
    *          @inheritdoc
    */
-  def apply[EE >: E, B](f: Result[EE, A ⇒ B])(implicit EE: Mergeable[EE]): Result[EE, B] =
+  def apply[EE >: E, B](f: Result[EE, A ⇒ B]): Result[EE, B] =
     fold(
-      e1 ⇒ f.fold(e2 ⇒ Result.invalid(EE.merge(e2, e1)), _ ⇒ Result.invalid(e1)),
-      a1 ⇒ f.fold(Result.invalid, ab ⇒ Result.valid(ab(a1)))
+      e1 ⇒ f.fold(e2 ⇒ Result.invalids(e2 ++ e1), _ ⇒ Result.invalids(e1)),
+      a1 ⇒ f.fold(Result.invalids, ab ⇒ Result.valid(ab(a1)))
     )
 
   /**
@@ -347,13 +354,12 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    *
    * @group Combine
    * @param other the other `Result` this one should be combined with
-   * @param EE the instance of the `Mergable` type-class for the error type
    * @tparam B the other valid type
    * @return a builder to eventually apply two `Result`s
    * @usecase def and[B](other: Result[E, B]): Result.Ap2[E, A, B]
    *          @inheritdoc
    */
-  def and[EE >: E, AA >: A, B](other: Result[EE, B])(implicit EE: Mergeable[EE]): Result.Ap2[EE, AA, B] =
+  def and[EE >: E, AA >: A, B](other: Result[EE, B]): Result.Ap2[EE, AA, B] =
     new Result.Ap2(this, other)
 
   /**
@@ -362,13 +368,12 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    *
    * @group Combine
    * @param b
-   * @param EE
    * @tparam B
    * @return
    * @usecase def zip[B](b: Result[E, B]): Result[E, (A, B)]
    *          @inheritdoc
    */
-  def zip[EE >: E, B](b: Result[EE, B])(implicit EE: Mergeable[EE]): Result[EE, (A, B)] =
+  def zip[EE >: E, B](b: Result[EE, B]): Result[EE, (A, B)] =
     and(b).tupled
 
   /**
@@ -473,7 +478,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    * @group Translate
    * @return
    */
-  def toEither: Either[E, A] =
+  def toEither: Either[NonEmptyVector[E], A] =
     fold(Left.apply, Right.apply)
 
   /**
@@ -483,13 +488,13 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    * @usecase def toTry: Try[A]
    */
   def toTry(implicit ev: E <:< Throwable): Try[A] =
-    fold(ev andThen Failure.apply, Success.apply)
+    fold(es ⇒ Failure(es.head), Success.apply)
 
   /**
    * @group Transform
    * @return
    */
-  def swap: Result[A, E] =
+  def swap: Result[A, NonEmptyVector[E]] =
     fold(Result.valid, Result.invalid)
 
   /**
@@ -499,8 +504,8 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    * @tparam AA
    * @return
    */
-  def swapped[EE, AA](f: Result[A, E] ⇒ Result[AA, EE]): Result[EE, AA] =
-    f(swap).swap
+  def swapped[EE, AA](f: Result[A, NonEmptyVector[E]] ⇒ Result[AA, NonEmptyVector[EE]]): Result[EE, NonEmptyVector[AA]] =
+    f(swap).fold(Result.valid, Result.invalids)
 
   /**
    * @group Access
@@ -519,7 +524,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    * @usecase def valueOr(x: E ⇒ A): A
    *          @inheritdoc
    */
-  def valueOr[AA >: A](x: E ⇒ AA): AA =
+  def valueOr[AA >: A](x: NonEmptyVector[E] ⇒ AA): AA =
     fold(x, identity)
 
   /**
@@ -530,7 +535,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    *          @inheritdoc
    */
   def getEither[AA >: A](implicit ev: E <:< AA): AA =
-    fold(ev, identity)
+    fold(_.head, identity)
 
   /**
    * @group Combine
@@ -545,31 +550,27 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
   /**
    * @group Combine
    * @param other
-   * @param EE
-   * @param AA
    * @return
    * @usecase def merge(other: Result[E, A]): Result[E, A]
    *          @inheritdoc
    */
-  def merge[EE >: E, AA >: A](other: ⇒ Result[EE, AA])(implicit EE: Mergeable[EE], AA: Mergeable[AA]): Result[EE, AA] =
+  def merge[EE >: E, AA >: A](other: ⇒ Result[EE, AA]): Result[EE, NonEmptyVector[AA]] =
     fold(
-      e1 ⇒ other.fold(e2 ⇒ Result.invalid(EE.merge(e1, e2)), _ ⇒ this),
-      a1 ⇒ other.fold(_ ⇒ other, a2 ⇒ Result.valid(AA.merge(a1, a2)))
+      e1 ⇒ other.fold(e2 ⇒ Result.invalids(e2 ++ e1), _ ⇒ this.nev),
+      a1 ⇒ other.fold(_ ⇒ other.nev, a2 ⇒ Result.valid(NonEmptyVector.of(a1, a2)))
     )
 
   /**
    * @group Combine
    * @param other
-   * @param EE
-   * @param AA
    * @return
    * @usecase def append(other: Result[E, A]): Result[E, A]
    *          @inheritdoc
    */
-  def append[EE >: E, AA >: A](other: ⇒ Result[EE, AA])(implicit EE: Mergeable[EE], AA: Mergeable[AA]): Result[EE, AA] =
+  def append[EE >: E, AA >: A](other: ⇒ Result[EE, AA]): Result[EE, NonEmptyVector[AA]] =
     fold(
-      e1 ⇒ other.fold(e2 ⇒ Result.invalid(EE.merge(e1, e2)), _ ⇒ other),
-      a1 ⇒ other.fold(_ ⇒ this, a2 ⇒ Result.valid(AA.merge(a1, a2)))
+      e1 ⇒ other.fold(e2 ⇒ Result.invalids(e2 ++ e1), _ ⇒ other.nev),
+      a1 ⇒ other.fold(_ ⇒ this.nev, a2 ⇒ Result.valid(NonEmptyVector.of(a1, a2)))
     )
 
   /**
@@ -582,7 +583,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    */
   def compare[EE >: E, AA >: A](other: Result[EE, AA])(implicit EE: Ordering[EE], AA: Ordering[AA]): Int =
     fold(
-      e ⇒ other.fold(EE.compare(e, _), _ ⇒ -1),
+      e ⇒ other.fold(e.compare(_), _ ⇒ -1),
       a ⇒ other.fold(_ ⇒ 1, AA.compare(a, _))
     )
 
@@ -596,7 +597,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    */
   def ==[EE >: E, AA >: A](other: Result[EE, AA])(implicit EE: Equiv[EE], AA: Equiv[AA]): Boolean =
     fold(
-      e ⇒ other.fold(EE.equiv(e, _), _ ⇒ false),
+      e ⇒ other.fold(_ == e, _ ⇒ false),
       a ⇒ other.fold(_ ⇒ false, AA.equiv(a, _))
     )
 }
@@ -645,6 +646,16 @@ object Result {
    */
   def invalid[E, A](e: E): Result[E, A] =
     new Invalid[E](e)
+
+  /**
+   * @group Create
+   * @param es
+   * @tparam E
+   * @tparam A
+   * @return
+   */
+  def invalids[E, A](es: NonEmptyVector[E]): Result[E, A] =
+    if (es.tail.isEmpty) new Invalid[E](es.head) else new Invalids[E](es)
 
   /**
    * @group Create
@@ -763,7 +774,7 @@ object Result {
    * @usecase def traverse[A, B, E](xs: Seq[A])(f: A => Result[E, B]): Result[E, Seq[B]\]
    *          @inheritdoc
    */
-  def traverse[A, B, E, F[X] <: TraversableOnce[X], That](xs: F[A])(f: A => Result[E, B])(implicit E: Mergeable[E], cbf: CanBuildFrom[F[A], B, That]): Result[E, That] =
+  def traverse[A, B, E, F[X] <: TraversableOnce[X], That](xs: F[A])(f: A => Result[E, B])(implicit cbf: CanBuildFrom[F[A], B, That]): Result[E, That] =
     xs.foldLeft(valid[E, mutable.Builder[B, That]](cbf(xs)))((acc, r) ⇒ f(r)(acc.map(b ⇒ b += _))).map(_.result())
 
   /**
@@ -777,7 +788,7 @@ object Result {
    * @return A Result with all invalid values or Unit
    * @since 0.2.0
    */
-  def traverse_[A, E](xs: TraversableOnce[A])(f: A => Result[E, Unit])(implicit E: Mergeable[E]): Result[E, Unit] =
+  def traverse_[A, E](xs: TraversableOnce[A])(f: A => Result[E, Unit]): Result[E, Unit] =
     xs.foldLeft(valid[E, Unit](()))((a, r) ⇒ f(r)(a.map(ಠ ⇒ _ ⇒ ಠ)))
 
   /**
@@ -791,11 +802,12 @@ object Result {
    * @usecase def sequence[A, E](xs: Seq[Result[E, A]\]): Result[E, Seq[A]\]
    *          @inheritdoc
    */
-  def sequence[A, E, F[X] <: TraversableOnce[X]](xs: F[Result[E, A]])(implicit E: Mergeable[E], cbf: CanBuildFrom[F[Result[E, A]], A, F[A]]): Result[E, F[A]] =
+  def sequence[A, E, F[X] <: TraversableOnce[X]](xs: F[Result[E, A]])(implicit cbf: CanBuildFrom[F[Result[E, A]], A, F[A]]): Result[E, F[A]] =
     traverse(xs)(x ⇒ x)
 
   final case class Valid[+A](value: A) extends Result[Nothing, A]
   final case class Invalid[+E](error: E) extends Result[E, Nothing]
+  final case class Invalids[+E](error: NonEmptyVector[E]) extends Result[E, Nothing]
 
   trait I[E] {
 
@@ -819,10 +831,10 @@ object Result {
 
   class Ap2[X, A, B](a: Result[X, A], b: Result[X, B]) {
 
-    def apply[C](fn: (A, B) ⇒ C)(implicit X: Mergeable[X]): Result[X, C] =
+    def apply[C](fn: (A, B) ⇒ C): Result[X, C] =
       b(a.map(fn.curried))
 
-    def tupled(implicit X: Mergeable[X]): Result[X, (A, B)] =
+    def tupled: Result[X, (A, B)] =
       apply(Tuple2.apply)
 
     def and[C](c: Result[X, C]): Ap3[C] =
@@ -830,10 +842,10 @@ object Result {
 
     sealed class Ap3[C](c: Result[X, C]) {
 
-      def apply[D](fn: (A, B, C) ⇒ D)(implicit X: Mergeable[X]): Result[X, D] =
+      def apply[D](fn: (A, B, C) ⇒ D): Result[X, D] =
         c(b(a.map(fn.curried)))
 
-      def tupled(implicit X: Mergeable[X]): Result[X, (A, B, C)] =
+      def tupled: Result[X, (A, B, C)] =
         apply(Tuple3.apply)
 
       def and[D](d: Result[X, D]): Ap4[D] =
@@ -841,10 +853,10 @@ object Result {
 
       class Ap4[D](d: Result[X, D]) {
 
-        def apply[E](fn: (A, B, C, D) ⇒ E)(implicit X: Mergeable[X]): Result[X, E] =
+        def apply[E](fn: (A, B, C, D) ⇒ E): Result[X, E] =
           d(c(b(a.map(fn.curried))))
 
-        def tupled(implicit X: Mergeable[X]): Result[X, (A, B, C, D)] =
+        def tupled: Result[X, (A, B, C, D)] =
           apply(Tuple4.apply)
 
         def and[E](e: Result[X, E]): Ap5[E] =
@@ -852,10 +864,10 @@ object Result {
 
         class Ap5[E](e: Result[X, E]) {
 
-          def apply[F](fn: (A, B, C, D, E) ⇒ F)(implicit X: Mergeable[X]): Result[X, F] =
+          def apply[F](fn: (A, B, C, D, E) ⇒ F): Result[X, F] =
             e(d(c(b(a.map(fn.curried)))))
 
-          def tupled(implicit X: Mergeable[X]): Result[X, (A, B, C, D, E)] =
+          def tupled: Result[X, (A, B, C, D, E)] =
             apply(Tuple5.apply)
 
           def and[F](f: Result[X, F]): Ap6[F] =
@@ -863,10 +875,10 @@ object Result {
 
           class Ap6[F](f: Result[X, F]) {
 
-            def apply[G](fn: (A, B, C, D, E, F) ⇒ G)(implicit X: Mergeable[X]): Result[X, G] =
+            def apply[G](fn: (A, B, C, D, E, F) ⇒ G): Result[X, G] =
               f(e(d(c(b(a.map(fn.curried))))))
 
-            def tupled(implicit X: Mergeable[X]): Result[X, (A, B, C, D, E, F)] =
+            def tupled: Result[X, (A, B, C, D, E, F)] =
               apply(Tuple6.apply)
 
             def and[G](g: Result[X, G]): Ap7[G] =
@@ -874,10 +886,10 @@ object Result {
 
             class Ap7[G](g: Result[X, G]) {
 
-              def apply[H](fn: (A, B, C, D, E, F, G) ⇒ H)(implicit X: Mergeable[X]): Result[X, H] =
+              def apply[H](fn: (A, B, C, D, E, F, G) ⇒ H): Result[X, H] =
                 g(f(e(d(c(b(a.map(fn.curried)))))))
 
-              def tupled(implicit X: Mergeable[X]): Result[X, (A, B, C, D, E, F, G)] =
+              def tupled: Result[X, (A, B, C, D, E, F, G)] =
                 apply(Tuple7.apply)
 
               def and[H](h: Result[X, H]): Ap8[H] =
@@ -885,10 +897,10 @@ object Result {
 
               class Ap8[H](h: Result[X, H]) {
 
-                def apply[J](fn: (A, B, C, D, E, F, G, H) ⇒ J)(implicit X: Mergeable[X]): Result[X, J] =
+                def apply[J](fn: (A, B, C, D, E, F, G, H) ⇒ J): Result[X, J] =
                   h(g(f(e(d(c(b(a.map(fn.curried))))))))
 
-                def tupled(implicit X: Mergeable[X]): Result[X, (A, B, C, D, E, F, G, H)] =
+                def tupled: Result[X, (A, B, C, D, E, F, G, H)] =
                   apply(Tuple8.apply)
 
                 def and[J](j: Result[X, J]): Ap9[J] =
@@ -896,10 +908,10 @@ object Result {
 
                 class Ap9[J](i: Result[X, J]) {
 
-                  def apply[K](fn: (A, B, C, D, E, F, G, H, J) ⇒ K)(implicit X: Mergeable[X]): Result[X, K] =
+                  def apply[K](fn: (A, B, C, D, E, F, G, H, J) ⇒ K): Result[X, K] =
                     i(h(g(f(e(d(c(b(a.map(fn.curried)))))))))
 
-                  def tupled(implicit X: Mergeable[X]): Result[X, (A, B, C, D, E, F, G, H, J)] =
+                  def tupled: Result[X, (A, B, C, D, E, F, G, H, J)] =
                     apply(Tuple9.apply)
                 }
               }
@@ -914,28 +926,28 @@ object Result {
 
     implicit final class SymbolicOps[E, A](val r: Result[E, A]) extends AnyVal {
 
-      def |@|[EE >: E, AA >: A, B, C](other: Result[EE, B])(implicit EE: Mergeable[EE]): Result.Ap2[EE, AA, B] =
+      def |@|[EE >: E, AA >: A, B, C](other: Result[EE, B]): Result.Ap2[EE, AA, B] =
         r.and(other)
 
-      def unary_~ : Result[A, E] =
+      def unary_~ : Result[A, NonEmptyVector[E]] =
         r.swap
 
-      def ~[EE, AA](f: Result[A, E] ⇒ Result[AA, EE]): Result[EE, AA] =
+      def ~[EE, AA](f: Result[A, NonEmptyVector[E]] ⇒ Result[AA, NonEmptyVector[EE]]): Result[EE, NonEmptyVector[AA]] =
         r.swapped(f)
 
       def |[AA >: A](aa: ⇒ AA): AA =
         r.getOrElse(aa)
 
-      def ?[AA >: A](x: E ⇒ AA): AA =
-        r.fold(x, identity)
+      def ?[AA >: A](x: NonEmptyVector[E] ⇒ AA): AA =
+        r.valueOr(x)
 
       def |||[EE >: E, AA >: A](other: ⇒ Result[EE, AA]): Result[EE, AA] =
         r.orElse(other)
 
-      def +++[EE >: E, AA >: A](other: ⇒ Result[EE, AA])(implicit EE: Mergeable[EE], AA: Mergeable[AA]): Result[EE, AA] =
+      def +++[EE >: E, AA >: A](other: ⇒ Result[EE, AA]): Result[EE, NonEmptyVector[AA]] =
         r.merge(other)
 
-      def +|+[EE >: E, AA >: A](other: ⇒ Result[EE, AA])(implicit EE: Mergeable[EE], AA: Mergeable[AA]): Result[EE, AA] =
+      def +|+[EE >: E, AA >: A](other: ⇒ Result[EE, AA]): Result[EE, NonEmptyVector[AA]] =
         r.append(other)
     }
 
@@ -990,12 +1002,12 @@ object Result {
         r.fold(_ ⇒ (), f)
 
       def foreachInvalid(f: E ⇒ Unit): Unit =
-        r.fold(f, _ ⇒ ())
+        r.fold(_.toVector.foreach(f), _ ⇒ ())
 
       def get: A =
         r.fold(_ ⇒ sys.error("Result.invalid"), identity)
 
-      def getInvalid: E =
+      def getInvalid: NonEmptyVector[E] =
         r.fold(identity, _ ⇒ sys.error("Result.valid"))
     }
   }
