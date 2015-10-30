@@ -1,5 +1,5 @@
 [![Travis CI](https://img.shields.io/travis/knutwalker/validation/master.svg)](https://travis-ci.org/knutwalker/validation)
-[![Coverage Status](https://img.shields.io/coveralls/knutwalker/validation/master.svg)](https://coveralls.io/r/knutwalker/validation)
+[![Coverage Status](https://img.shields.io/codecov/c/github/knutwalker/validation/master.svg)](https://codecov.io/github/knutwalker/validation)
 [![Maven](https://img.shields.io/maven-central/v/de.knutwalker/validation_2.11.svg)](http://search.maven.org/#search|ga|1|g%3A%22de.knutwalker%22%20AND%20a%3A%22validation_2.11%22)
 [![Apache License](https://img.shields.io/badge/license-APACHE_2-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
