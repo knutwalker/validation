@@ -13,7 +13,7 @@ object ValidationBuild extends AutoPlugin {
                   maintainer := "Paul Horn",
                githubProject := Github("knutwalker", "validation"),
                  description := "stand-alone validation type",
-                scalaVersion := "2.11.6",
+                scalaVersion := "2.11.7",
 //          crossScalaVersions := scalaVersion.value :: "2.10.5" :: Nil,
                  javaVersion := JavaVersion.Java17,
              autoAPIMappings := true,

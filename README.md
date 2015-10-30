@@ -12,8 +12,8 @@ The `Result` type is very similar to `scalaz.Validation`, `cats.data.Validated`,
 - no dependencies besides scala and no additional baggage
 
 that is no Monads, Applicative Functors, Arrows, or Categories.
-The only thing that is provided besides `Result` is a type class called `Mergeable`
-which is a Semigroup in disguise. Plans to remove even this exist.
+The only thing that is provided besides `Result` is a `NonEmptyVector` which is
+similar to a regular `Vector`, only that there will always be at least one element in it.
 
 The main incentive is, that `Result` can be used in places where a full-fledged
 dependency on `scalaz` and co. is undesired, e.g. in projects with many people
@@ -44,7 +44,7 @@ a general data structure.
 ## Installing
 
 ```
-libraryDependencies += "de.knutwalker" %% "validation" % "0.1.0"
+libraryDependencies += "de.knutwalker" %% "validation" % "0.2.0"
 ```
 
 
