@@ -6,7 +6,7 @@ jdk:
   - oraclejdk7
 
 scala:
-  - 2.11.7
+  - 2.12.1
 
 cache:
   directories:
