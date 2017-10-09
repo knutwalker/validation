@@ -44,7 +44,11 @@ a general data structure.
 ## Installing
 
 ```
+// scala 2.11.x
 libraryDependencies += "de.knutwalker" %% "validation" % "0.2.0"
+
+// scala 2.12.x
+libraryDependencies += "de.knutwalker" %% "validation" % "0.3.0"
 ```
 
 
