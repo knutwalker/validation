@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Horn
+ * Copyright 2015 – 2017 Paul Horn
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import scala.util.{Failure, Success, Try}
  *  - `[[validation.Result.Valid Valid]](a)`
  *  - `[[validation.Result.Invalid Invalid]](e)`
  *
- * It is similar to [[scala.util.Either Either]] or a more generic [[scala.util.Try Try]].
+ * It is similar to `Either` or a more generic `Try`.
  *
  * == Motivation ==
  *
@@ -326,6 +326,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    * @param f the function to continue with
    * @tparam F the resulting invalid type
    * @return the result of applying `f` over the invalid value in the `Result` context
+   * @since 0.2.0
    * @usecase def recoverWith[F](f: E ⇒ Result[F, A]): Result[F, A]
    *          @inheritdoc
    */
@@ -334,7 +335,8 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
 
   /**
    * @group Transform
-   * @return
+   * @return Result where the valid value is wrapped in a [[NonEmptyVector]]
+   * @since 0.2.0
    */
   def nev: Result[E, NonEmptyVector[A]] =
     map(NonEmptyVector(_))
@@ -445,7 +447,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
 
   /**
    * @group Translate
-   * @return a [[scala.Option]]
+   * @return a `scala.Option`
    */
   def toOption: Option[A] =
     fold(_ ⇒ None, Some.apply)
@@ -544,6 +546,7 @@ sealed trait Result[+E, @specialized +A] extends Any with Product with Serializa
    * @group Access
    * @param ev
    * @return
+   * @since 0.2.0
    * @usecase def getEither: A
    *          @inheritdoc
    */
@@ -722,6 +725,7 @@ object Result {
    * @tparam E
    * @tparam A
    * @return
+   * @since 0.2.0
    */
   def cond[E, A](p: Boolean, ifTrue: ⇒ A, ifFalse: ⇒ E): Result[E, A] =
     if (p) valid(ifTrue) else invalid(ifFalse)
@@ -730,6 +734,7 @@ object Result {
    * @group Create
    * @param s
    * @return
+   * @since 0.2.0
    */
   def parseByte(s: String): Result[NumberFormatException, Byte] =
     catching[NumberFormatException].run(s.toByte)
@@ -738,6 +743,7 @@ object Result {
    * @group Create
    * @param s
    * @return
+   * @since 0.2.0
    */
   def parseDouble(s: String): Result[NumberFormatException, Double] =
     catching[NumberFormatException].run(s.toDouble)
@@ -746,6 +752,7 @@ object Result {
    * @group Create
    * @param s
    * @return
+   * @since 0.2.0
    */
   def parseFloat(s: String): Result[NumberFormatException, Float] =
     catching[NumberFormatException].run(s.toFloat)
@@ -754,6 +761,7 @@ object Result {
    * @group Create
    * @param s
    * @return
+   * @since 0.2.0
    */
   def parseInt(s: String): Result[NumberFormatException, Int] =
     catching[NumberFormatException].run(s.toInt)
@@ -762,6 +770,7 @@ object Result {
    * @group Create
    * @param s
    * @return
+   * @since 0.2.0
    */
   def parseLong(s: String): Result[NumberFormatException, Long] =
     catching[NumberFormatException].run(s.toLong)
@@ -770,6 +779,7 @@ object Result {
    * @group Create
    * @param s
    * @return
+   * @since 0.2.0
    */
   def parseShort(s: String): Result[NumberFormatException, Short] =
     catching[NumberFormatException].run(s.toShort)
@@ -825,7 +835,7 @@ object Result {
   /**
    * Curried [[Result]] type, starting with the invalid part.
    *
-   * This can be used to avoid type lambas:
+   * This can be used to avoid type lambdas:
    *
    * {{{
    *   // instead of
@@ -844,7 +854,7 @@ object Result {
   /**
    * Curried [[Result]] type, starting with the valid part.
    *
-   * This can be used to avoid type lambas:
+   * This can be used to avoid type lambdas:
    *
    * {{{
    *   // instead of
@@ -861,11 +871,23 @@ object Result {
   }
 
   final class FromTryCatchAux[T >: Null <: Throwable, R] private[validation] (leftMap: T ⇒ R) {
+    /**
+     * @param f
+     * @param T
+     * @tparam A
+     * @return
+     */
     def run[A](f: ⇒ A)(implicit T: ClassTag[T]): Result[R, A] =
       Exception.catching(T.runtimeClass)
         .withApply(t ⇒ invalid(leftMap(t.asInstanceOf[T])))
         .apply(valid(f))
 
+    /**
+     * @param f
+     * @tparam RR
+     * @return
+     * @since 0.2.0
+     */
     def using[RR](f: R ⇒ RR): FromTryCatchAux[T, RR] =
       new FromTryCatchAux(leftMap andThen f)
   }
@@ -965,6 +987,7 @@ object Result {
 
   object symbolic {
 
+    /** @since 0.2.0 */
     type \?/[+E, +A] = Result[E, A]
 
     implicit final class SymbolicOps[E, A](val r: E \?/ A) extends AnyVal {

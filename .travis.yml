@@ -6,8 +6,7 @@ jdk:
   - oraclejdk7
 
 scala:
-  - 2.11.6
-#  - 2.10.5
+  - 2.12.1
 
 cache:
   directories:
@@ -21,5 +20,8 @@ script:
   - find $HOME/.sbt -name "*.lock" | xargs rm
   - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
 
+before_install:
+  - pip install --user codecov
+
 after_success:
-  - sbt coveralls
+  - codecov
